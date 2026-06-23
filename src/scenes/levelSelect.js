@@ -1,11 +1,11 @@
 // ==========================================
-// Scène Sélection de Niveau : grille de niveaux (verrouillés/débloqués)
+// Scène Choix de la Difficulté (CdC US07) : 3 niveaux de bot (1/2/3),
 // puis choix du chat combattant (dialog) avant de lancer le combat.
 // ==========================================
 
 import { register, navigate } from '../core/sceneManager.js';
-import { getAllLevels } from '../data/levels.js';
-import { getUnlockedLevel, getCats } from '../core/storage.js';
+import { BOT_LEVELS } from '../data/levels.js';
+import { getCats } from '../core/storage.js';
 import { startBattle } from './battle.js';
 
 let grid, picker, pickerList, pendingLevel;
@@ -17,8 +17,8 @@ export function initLevelSelect() {
   root.style.display = 'none';
   root.innerHTML = `
     <button class="btn-back" id="btn-back-levels">⬅ Retour</button>
-    <div class="scene-title">Niveaux</div>
-    <div class="level-grid"></div>
+    <div class="scene-title">Difficulté</div>
+    <div class="level-grid level-grid--difficulty"></div>
   `;
   document.getElementById('game-container').appendChild(root);
   register('levelSelect', root, 'flex');
@@ -44,19 +44,20 @@ export function initLevelSelect() {
 }
 
 function renderLevels() {
-  const unlocked = getUnlockedLevel();
   grid.innerHTML = '';
+  const colors = { 1: '#58a060', 2: '#d8a000', 3: '#e05050' };
 
-  getAllLevels().forEach((lv) => {
-    const locked = lv.id > unlocked;
+  BOT_LEVELS.forEach((lv) => {
+    const b = lv.base;
     const btn = document.createElement('button');
-    btn.className = 'level-btn' + (locked ? ' locked' : '') + (lv.isBoss ? ' boss' : '');
+    btn.className = 'level-btn level-btn--diff';
+    btn.style.boxShadow = `inset 0 0 0 4px ${colors[lv.level]}, 4px 4px 0 rgba(0,0,0,.5)`;
     btn.innerHTML = `
-      <div class="lvl-num">${locked ? '🔒' : (lv.isBoss ? '👑' : lv.id)}</div>
-      <div class="lvl-enemy">${lv.enemy.sprite} ${lv.isBoss ? 'BOSS' : lv.enemy.name}</div>
-      <div class="lvl-meta">Niv.${lv.enemy.level}</div>
+      <div class="lvl-num">Niv.${lv.level}</div>
+      <div class="lvl-enemy">${lv.label}</div>
+      <div class="lvl-meta">PV ${b.maxpv} · ATK ${b.atk} · DEF ${b.def} · VIT ${b.vit}</div>
     `;
-    if (!locked) btn.addEventListener('click', () => openPicker(lv));
+    btn.addEventListener('click', () => openPicker(lv.level));
     grid.appendChild(btn);
   });
 }
@@ -75,14 +76,14 @@ function openPicker(level) {
   pendingLevel = level;
   pickerList.innerHTML = '';
   cats.forEach((c, i) => {
-    const b = document.createElement('button');
-    b.className = 'picker-cat retro-button';
-    b.innerHTML = `${c.sprite || '🐱'} ${c.name} <span style="font-size:8px;">Niv.${c.level || 5}</span>`;
-    b.addEventListener('click', () => {
+    const btn = document.createElement('button');
+    btn.className = 'picker-cat retro-button';
+    btn.innerHTML = `${c.asset || '🐱'} ${c.name} <span style="font-size:8px;">Niv.${c.lvl}</span>`;
+    btn.addEventListener('click', () => {
       picker.close();
       startBattle(pendingLevel, i);
     });
-    pickerList.appendChild(b);
+    pickerList.appendChild(btn);
   });
   picker.showModal();
 }

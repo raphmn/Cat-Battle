@@ -188,7 +188,10 @@
 
 .bttn-action {
   font-family: 'Press Start 2P', monospace;
-  font-size: 11px;
+  font-size: 10px;
+  line-height: 1.4;
+  text-align: center;
+  padding: 4px;
   cursor: pointer;
   border: 4px solid #000;
   border-radius: 10px;
@@ -197,9 +200,9 @@
   box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
   transition: transform 0.08s, box-shadow 0.08s, filter 0.1s;
 }
-.bttn-action[data-act='attack'] { background: #e86850; }
-.bttn-action[data-act='defense'] { background: #58a060; }
+.bttn-action[data-act='griffer'] { background: #e86850; }
 .bttn-action[data-act='special'] { background: #9858a0; }
+.bttn-action[data-act='abri'] { background: #58a060; }
 .bttn-action[data-act='flee'] { background: #4878b0; }
 
 .bttn-action:active {

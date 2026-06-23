@@ -1,36 +1,31 @@
 // ==========================================
-// Définition des actions de combat disponibles.
-// - attack  : dégâts normaux, illimité
-// - defense : posture défensive, réduit les dégâts subis, illimité
-// - special : gros dégâts, rechargement 2 tours
+// Actions de combat (CdC §3.3).
+// - griffer : attaque normale, crit possible (crit dérivé de vit)
+// - special : COUP SPÉCIAL, dégâts ×1.55 mais ~22% de raté
+// - abri    : ABRI, bloque 100% des dégâts du tour, pas 2 tours de suite
+// (Fuir est géré à part : fin de combat immédiate, sans résultat.)
 // ==========================================
 
 export const ACTIONS = {
-  attack: {
-    id: 'attack',
-    label: 'Attaque',
+  griffer: {
+    id: 'griffer',
+    label: 'GRIFFER',
     type: 'damage',
-    multiplier: 1.0,
-    cooldown: 0,
-  },
-  defense: {
-    id: 'defense',
-    label: 'Défense',
-    type: 'defend',
-    cooldown: 0,
+    mult: 1.0,
   },
   special: {
     id: 'special',
-    label: 'Spéciale',
+    label: 'COUP SPÉCIAL',
     type: 'damage',
-    multiplier: 1.9,
-    critBonus: 12,
-    cooldown: 2, // utilisable tous les 2 tours
+    mult: 1.55,
+    missChance: 0.22,
+  },
+  abri: {
+    id: 'abri',
+    label: 'ABRI',
+    type: 'shield',
   },
 };
 
-// Ordre d'affichage des 3 boutons d'action (le 4e bouton = Fuir).
-export const PLAYER_ACTIONS = ['attack', 'defense', 'special'];
-
-// Réduction de dégâts quand on est en posture défensive.
-export const DEFEND_REDUCTION = 0.5;
+// Ordre des 3 boutons d'action (le 4e bouton = Fuir).
+export const PLAYER_ACTIONS = ['griffer', 'special', 'abri'];

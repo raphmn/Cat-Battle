@@ -1,42 +1,41 @@
 // ==========================================
 // Scène Liste des Chats + formulaire d'Adoption + suppression.
+// Modèle de données aligné CdC : atk/def/vit/maxpv, type en minuscules.
 // ==========================================
 
 import { navigate } from '../core/sceneManager.js';
 import { getCats, addCat, deleteCat } from '../core/storage.js';
 import { Cat, DomesticCat, WildCat } from '../entities/Cat.js';
 
+// slider 0/1/2 -> type stocké + libellé affiché
 const TYPE_MAPPING = {
-  0: { name: 'Domestique', color: '#44aaff' },
-  1: { name: 'Base', color: '#ffcc00' },
-  2: { name: 'Sauvage', color: '#ff4444' },
+  0: { type: 'domestique', label: 'Domestique', color: '#44aaff' },
+  1: { type: 'base', label: 'Base', color: '#ffcc00' },
+  2: { type: 'sauvage', label: 'Sauvage', color: '#ff4444' },
 };
 
-const SPRITE_OPTIONS = ['🐱', '🐈', '🐈‍⬛', '😺', '😼', '🐯', '🦁'];
+const ASSET_OPTIONS = ['🐱', '🐈', '🐈‍⬛', '😺', '😼', '🐯', '🦁'];
 
 let catIndexToDelete = null;
 
 export function initCatList() {
-  const sceneCatList = document.getElementById('scene-cat-list');
-  const sceneAdopt = document.getElementById('scene-adopt');
   const btnBackCatList = document.getElementById('btn-back-cat-list');
   const btnAdopt = document.getElementById('btn-adopt');
   const btnCancelAdopt = document.getElementById('btn-cancel-adopt');
   const formAdopt = document.getElementById('form-adopt');
   const sliderType = document.getElementById('adopt-type-slider');
   const displayType = document.getElementById('adopt-type-display');
-  const spriteSelect = document.getElementById('adopt-sprite');
+  const assetSelect = document.getElementById('adopt-sprite');
   const confirmDeleteDialog = document.getElementById('confirm-delete-dialog');
 
-  // Ajoute les sprites (emoji) disponibles à l'adoption
-  SPRITE_OPTIONS.forEach((s) => {
+  // Sprites (emoji) disponibles à l'adoption
+  ASSET_OPTIONS.forEach((s) => {
     const opt = document.createElement('option');
     opt.value = s;
     opt.textContent = s;
-    spriteSelect.appendChild(opt);
+    assetSelect.appendChild(opt);
   });
 
-  // Rafraîchit la liste quand la scène devient visible
   window.addEventListener('scene:change', (e) => {
     if (e.detail === 'catList') renderCatList();
   });
@@ -58,11 +57,11 @@ export function initCatList() {
 
   sliderType.addEventListener('input', (e) => {
     const config = TYPE_MAPPING[e.target.value];
-    displayType.innerText = config.name;
+    displayType.innerText = config.label;
     displayType.style.color = config.color;
     sliderType.style.setProperty('--slider-color', config.color);
     displayType.classList.remove('type-animated');
-    void displayType.offsetWidth; // force un reflow pour relancer l'anim
+    void displayType.offsetWidth;
     displayType.classList.add('type-animated');
   });
 
@@ -74,13 +73,13 @@ export function initCatList() {
   formAdopt.addEventListener('submit', (e) => {
     e.preventDefault();
     const name = document.getElementById('adopt-name').value;
-    const type = TYPE_MAPPING[sliderType.value].name;
-    const sprite = spriteSelect.value;
+    const type = TYPE_MAPPING[sliderType.value].type;
+    const asset = assetSelect.value;
 
     let newCat;
-    if (type === 'Domestique') newCat = new DomesticCat(name, sprite);
-    else if (type === 'Sauvage') newCat = new WildCat(name, sprite);
-    else newCat = new Cat(name, sprite);
+    if (type === 'domestique') newCat = new DomesticCat(name, asset);
+    else if (type === 'sauvage') newCat = new WildCat(name, asset);
+    else newCat = new Cat(name, asset);
 
     addCat(newCat.toJSON());
     formAdopt.reset();
@@ -103,6 +102,10 @@ export function initCatList() {
   });
 }
 
+function capitalize(s) {
+  return s ? s.charAt(0).toUpperCase() + s.slice(1) : s;
+}
+
 function renderCatList() {
   const cats = getCats();
   const catListEmptyMsg = document.getElementById('cat-list-empty-msg');
@@ -119,10 +122,10 @@ function renderCatList() {
   catListItems.style.display = 'block';
   catListItems.innerHTML = '';
 
-  const statKeys = ['pv', 'attack', 'defense', 'speed', 'crit'];
-  const labels = ['PV', 'ATK', 'DEF', 'VIT', 'CRI'];
-  const maxValues = [150, 50, 30, 40, 30];
-  const colors = ['#ff4444', '#ff8800', '#ffcc00', '#44ff44', '#44aaff'];
+  const statKeys = ['maxpv', 'atk', 'def', 'vit'];
+  const labels = ['PV', 'ATK', 'DEF', 'VIT'];
+  const maxValues = [150, 50, 30, 40];
+  const colors = ['#ff4444', '#ff8800', '#ffcc00', '#44ff44'];
 
   cats.forEach((cat, index) => {
     const card = document.createElement('div');
@@ -131,8 +134,8 @@ function renderCatList() {
     const info = document.createElement('div');
     info.className = 'cat-card-info';
     info.innerHTML = `
-      <div class="cat-card-name">${cat.sprite || ''} ${cat.name}</div>
-      <div style="font-size:8px; color:#555;">Type: ${cat.type} · Niv.${cat.level || 5}</div>
+      <div class="cat-card-name">${cat.asset || ''} ${cat.name}</div>
+      <div style="font-size:8px; color:#555;">${capitalize(cat.type)} · Niv.${cat.lvl} · ${cat.wins} victoire(s)</div>
     `;
 
     const statContainer = document.createElement('div');

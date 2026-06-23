@@ -1,23 +1,23 @@
 // ==========================================
-// Scène de Combat (style Pokémon).
+// Scène de Combat (style Pokémon, CdC §3.2/§3.3).
 // Haut : terrain + barres de vie ennemi/joueur.
-// Bas : boîte de message + 4 boutons (3 actions + Fuir).
-// Le moteur (Battle) gère la logique ; ici on joue les animations.
+// Bas : boîte de message + 4 boutons (GRIFFER / COUP SPÉCIAL / ABRI / FUIR).
 // ==========================================
 
 import { register, navigate } from '../core/sceneManager.js';
 import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
-import { getCats, saveCats, unlockLevel } from '../core/storage.js';
+import { generateBot } from '../data/levels.js';
+import { getCats, saveCats } from '../core/storage.js';
 import { playSfx, playTrack } from '../core/audio.js';
-import { TOTAL_LEVELS } from '../data/levels.js';
 
-const STAT_LABELS = { pv: 'PV', attack: 'ATQ', defense: 'DEF', speed: 'VIT', crit: 'CRIT' };
+const STAT_LABELS = { maxpv: 'PV', atk: 'ATK', def: 'DEF', vit: 'VIT' };
+const SKILLS = ['atk', 'def', 'vit']; // compétences gagnées après victoire
 const wait = (ms) => new Promise((r) => setTimeout(r, ms));
 
 let root, els;
 let battle = null;
-let ctx = null; // { level, catIndex }
+let ctx = null; // { botLevel, catIndex }
 let busy = false;
 
 export function initBattle() {
@@ -45,10 +45,10 @@ export function initBattle() {
     <div class="battle-ui">
       <div class="battle-message retro-box"><p class="msg-text"></p></div>
       <div class="battle-actions">
-        <button class="bttn-action" data-act="attack"></button>
-        <button class="bttn-action" data-act="defense"></button>
+        <button class="bttn-action" data-act="griffer"></button>
         <button class="bttn-action" data-act="special"></button>
-        <button class="bttn-action" data-act="flee">Fuir</button>
+        <button class="bttn-action" data-act="abri"></button>
+        <button class="bttn-action" data-act="flee">FUIR</button>
       </div>
     </div>
     <div class="battle-result" style="display:none">
@@ -89,25 +89,26 @@ export function initBattle() {
   });
 }
 
-export function startBattle(level, catIndex) {
+export function startBattle(botLevel, catIndex) {
   const cat = getCats()[catIndex];
   if (!cat) return;
 
-  ctx = { level, catIndex };
-  battle = new Battle(cat, level);
+  const bot = generateBot(botLevel);
+  ctx = { botLevel, catIndex };
+  battle = new Battle(cat, bot);
   busy = false;
 
   els.enemyName.textContent = battle.enemy.name;
-  els.enemyLevel.textContent = 'Niv.' + battle.enemy.level;
-  els.enemySprite.textContent = battle.enemy.sprite;
+  els.enemyLevel.textContent = 'Niv.' + battle.enemy.lvl;
+  els.enemySprite.textContent = battle.enemy.asset;
   els.playerName.textContent = battle.player.name;
-  els.playerLevel.textContent = 'Niv.' + battle.player.level;
-  els.playerSprite.textContent = battle.player.sprite;
+  els.playerLevel.textContent = 'Niv.' + battle.player.lvl;
+  els.playerSprite.textContent = battle.player.asset;
   els.result.style.display = 'none';
 
   updateHud();
   setActionsEnabled(false);
-  setMessage(`Un ${battle.enemy.name} sauvage apparaît !`);
+  setMessage(`Un bot ${battle.enemy.name} (Niv.${battle.enemy.lvl}) apparaît !`);
   playTrack('battle');
   navigate('battle');
   setTimeout(promptPlayer, 1000);
@@ -124,9 +125,9 @@ function setBar(el, hp, max) {
 }
 
 function updateHud() {
-  setBar(els.enemyHp, battle.enemy.hp, battle.enemy.maxHp);
-  setBar(els.playerHp, battle.player.hp, battle.player.maxHp);
-  els.playerHpNum.textContent = `${battle.player.hp}/${battle.player.maxHp}`;
+  setBar(els.enemyHp, battle.enemy.hp, battle.enemy.maxpv);
+  setBar(els.playerHp, battle.player.hp, battle.player.maxpv);
+  els.playerHpNum.textContent = `${battle.player.hp}/${battle.player.maxpv}`;
 }
 
 function setActionsEnabled(on) {
@@ -137,10 +138,12 @@ function promptPlayer() {
   setMessage(`Que fait ${battle.player.name} ?`);
   els.actionBtns.forEach((btn) => {
     const act = btn.dataset.act;
-    if (act === 'flee') return;
-    const cd = battle.player.cooldowns[act];
-    if (cd) {
-      btn.textContent = `${ACTIONS[act].label} (${cd})`;
+    if (act === 'flee') {
+      btn.textContent = 'FUIR';
+      return;
+    }
+    if (act === 'abri' && !battle.isAbriAvailable('player')) {
+      btn.textContent = 'ABRI (X)';
       btn.disabled = true;
     } else {
       btn.textContent = ACTIONS[act].label;
@@ -163,19 +166,15 @@ function onActionClick(e) {
   playEvents(battle.playRound(act)).then(afterRound);
 }
 
+// FUIR : fin de combat immédiate, sans victoire ni défaite (CdC §3.3).
 function handleFlee() {
   busy = true;
   setActionsEnabled(false);
-  if (battle.tryFlee()) {
-    setMessage('Vous prenez la fuite !');
-    setTimeout(() => {
-      playTrack('menu');
-      navigate('levelSelect');
-    }, 1200);
-  } else {
-    setMessage('Fuite impossible !');
-    setTimeout(() => playEvents(battle.enemyFreeTurn()).then(afterRound), 900);
-  }
+  setMessage('Vous prenez la fuite !');
+  setTimeout(() => {
+    playTrack('menu');
+    navigate('levelSelect');
+  }, 1100);
 }
 
 async function playEvents(events) {
@@ -209,23 +208,31 @@ function endBattle() {
   showResult('Défaite...', `${battle.player.name} est K.O.`, false);
 }
 
+// Progression (CdC US08) : +1 compétence aléatoire par victoire,
+// montée de niveau tous les 3 combats gagnés.
 function applyVictory() {
   const cats = getCats();
   const cat = cats[ctx.catIndex];
   const gained = [];
 
   if (cat) {
-    const reward = ctx.level.reward || {};
-    for (const [k, v] of Object.entries(reward)) {
-      cat[k] = (cat[k] || 0) + v;
-      gained.push(`${STAT_LABELS[k] || k} +${v}`);
+    const stat = SKILLS[Math.floor(Math.random() * SKILLS.length)];
+    cat[stat] = (cat[stat] || 0) + 1;
+    cat.wins = (cat.wins || 0) + 1;
+    gained.push(`${STAT_LABELS[stat]} +1`);
+
+    let leveled = false;
+    if (cat.wins % 3 === 0) {
+      cat.lvl = (cat.lvl || 1) + 1;
+      cat.maxpv += 10;
+      leveled = true;
+      gained.push('PV max +10');
     }
-    cat.level = (cat.level || 5) + 1;
     saveCats(cats);
-    unlockLevel(Math.min(ctx.level.id + 1, TOTAL_LEVELS));
-    showResult('Victoire !', `${cat.name} passe Niv.${cat.level} !\n${gained.join('   ')}`, true);
+
+    const lvlMsg = leveled ? ` — passe Niv.${cat.lvl} !` : '';
+    showResult('Victoire !', `${cat.name} : ${gained.join('   ')}${lvlMsg}`, true);
   } else {
-    unlockLevel(Math.min(ctx.level.id + 1, TOTAL_LEVELS));
     showResult('Victoire !', '', true);
   }
 }

@@ -1,12 +1,13 @@
 // ==========================================
 // Accès centralisé au localStorage.
-// Toute lecture/écriture de données persistantes passe par ici.
+// getCats() NORMALISE les enregistrements pour suivre le modèle du CdC
+// (atk/def/vit/maxpv/lvl/wins/asset) tout en migrant les anciens chats
+// (attack/defense/speed/pv/level/sprite/crit).
 // ==========================================
 
 export const KEYS = {
   playerName: 'catbattle_player_name',
   catList: 'cat_list',
-  progress: 'catbattle_progress',
 };
 
 // --- Profil joueur ---
@@ -19,8 +20,25 @@ export function setPlayerName(name) {
 }
 
 // --- Liste des chats ---
+function normalizeCat(c) {
+  return {
+    id: c.id || Date.now().toString(36) + Math.random().toString(36).slice(2),
+    name: c.name || 'Chat',
+    asset: c.asset ?? c.sprite ?? '',
+    type: (c.type || 'base').toLowerCase(),
+    item: c.item ?? null,
+    lvl: c.lvl ?? c.level ?? 1,
+    wins: c.wins ?? 0,
+    maxpv: c.maxpv ?? c.pv ?? 100,
+    atk: c.atk ?? c.attack ?? 20,
+    def: c.def ?? c.defense ?? 10,
+    vit: c.vit ?? c.speed ?? 15,
+  };
+}
+
 export function getCats() {
-  return JSON.parse(localStorage.getItem(KEYS.catList) || '[]');
+  const raw = JSON.parse(localStorage.getItem(KEYS.catList) || '[]');
+  return raw.map(normalizeCat);
 }
 
 export function saveCats(cats) {
@@ -37,15 +55,4 @@ export function deleteCat(index) {
   const cats = getCats();
   cats.splice(index, 1);
   saveCats(cats);
-}
-
-// --- Progression (plus haut niveau débloqué) ---
-export function getUnlockedLevel() {
-  return parseInt(localStorage.getItem(KEYS.progress) || '1', 10);
-}
-
-export function unlockLevel(levelId) {
-  if (levelId > getUnlockedLevel()) {
-    localStorage.setItem(KEYS.progress, String(levelId));
-  }
 }

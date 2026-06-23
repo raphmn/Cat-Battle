@@ -1,71 +1,37 @@
 // ==========================================
-// Génération ALÉATOIRE des niveaux de combat.
-// La difficulté monte progressivement : le niveau 1 est faible,
-// le dernier est un BOSS. Chaque niveau est généré à partir d'une
-// graine stable (basée sur son id) => même boss à chaque visite.
+// Niveaux de bot (CdC US07) : 3 difficultés aux stats croissantes.
+// À chaque combat un bot est généré ALÉATOIREMENT pour le niveau choisi
+// (US04) : nom + asset + type aléatoires, stats basées sur le niveau.
 // ==========================================
 
-import { mulberry32, randInt, pick } from '../core/rng.js';
+const NAMES = ['Minou', 'Bandit', 'Crocs', 'Tigrou', 'Moustache', 'Ombre', 'Néko', 'Félix', 'Patou'];
+const ASSETS = ['🐱', '🐈', '🐈‍⬛', '😼', '😾', '🐯', '🦁'];
+const TYPES = ['domestique', 'base', 'sauvage'];
 
-export const TOTAL_LEVELS = 10;
-
-const ENEMY_NAMES = [
-  'Minou Errant', 'Félix le Vif', 'Moustache', 'Gros Matou', 'Bandit',
-  'Crocs', 'Tigrou', 'Néko', "Ombre Furtive", 'Patte de Velours',
-  'Ronron Sauvage', 'Vagabond',
+export const BOT_LEVELS = [
+  { level: 1, label: 'Facile', base: { maxpv: 60, atk: 14, def: 6, vit: 10 }, jitter: 3 },
+  { level: 2, label: 'Moyen', base: { maxpv: 95, atk: 22, def: 12, vit: 16 }, jitter: 4 },
+  { level: 3, label: 'Difficile', base: { maxpv: 135, atk: 32, def: 18, vit: 24 }, jitter: 5 },
 ];
 
-const BOSS_NAMES = ['Roi Griffe', 'Empereur Moustache', 'Léon le Terrible', 'Dame Crocs'];
-const TYPES = ['Base', 'Domestique', 'Sauvage'];
-const SPRITES = ['🐱', '🐈', '🐈‍⬛', '😼', '😾', '🐯', '🦁'];
+const pickRand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+const jitter = (v, j) => v + Math.round((Math.random() * 2 - 1) * j);
 
-// Génère le niveau correspondant à un id donné (1..TOTAL_LEVELS).
-export function generateLevel(id) {
-  const rng = mulberry32(id * 2654435761); // graine stable par niveau
-  const isBoss = id === TOTAL_LEVELS;
-  const d = id; // facteur de difficulté
-
-  const displayLevel = Math.round(3 + (id - 1) * (isBoss ? 4 : 2.4));
-
-  const stats = {
-    pv: Math.round(50 + d * 15 + randInt(rng, -5, 10)),
-    attack: Math.round(8 + d * 3 + randInt(rng, -2, 3)),
-    defense: Math.round(4 + d * 2 + randInt(rng, -1, 2)),
-    speed: Math.round(8 + d * 1.5 + randInt(rng, -2, 3)),
-    crit: Math.round(5 + d * 1.2 + randInt(rng, -1, 2)),
-  };
-
-  if (isBoss) {
-    stats.pv = Math.round(stats.pv * 1.6);
-    stats.attack = Math.round(stats.attack * 1.3);
-    stats.defense = Math.round(stats.defense * 1.3);
-  }
-
-  const enemyName = isBoss ? pick(rng, BOSS_NAMES) : pick(rng, ENEMY_NAMES);
-  const sprite = pick(rng, SPRITES);
-  const type = pick(rng, TYPES);
-
-  // Récompense permanente accordée au chat vainqueur, qui grandit avec la difficulté.
-  const reward = {
-    attack: 2 + Math.floor(d / 3),
-    pv: 5 + d,
-  };
-  if (isBoss) {
-    reward.crit = 3;
-    reward.defense = 2;
-  } else if (d % 2 === 0) {
-    reward.speed = 2;
-  }
-
-  return {
-    id,
-    name: isBoss ? `Antre du Boss` : `Niveau ${id}`,
-    isBoss,
-    enemy: { name: enemyName, type, level: displayLevel, sprite, ...stats },
-    reward,
-  };
+export function getBotLevel(level) {
+  return BOT_LEVELS.find((b) => b.level === level) || BOT_LEVELS[0];
 }
 
-export function getAllLevels() {
-  return Array.from({ length: TOTAL_LEVELS }, (_, i) => generateLevel(i + 1));
+// Génère un bot aléatoire pour un niveau donné.
+export function generateBot(level) {
+  const cfg = getBotLevel(level);
+  return {
+    name: pickRand(NAMES),
+    asset: pickRand(ASSETS),
+    type: pickRand(TYPES),
+    lvl: level,
+    maxpv: Math.max(20, jitter(cfg.base.maxpv, cfg.jitter * 2)),
+    atk: Math.max(5, jitter(cfg.base.atk, cfg.jitter)),
+    def: Math.max(1, jitter(cfg.base.def, cfg.jitter)),
+    vit: Math.max(3, jitter(cfg.base.vit, cfg.jitter)),
+  };
 }
