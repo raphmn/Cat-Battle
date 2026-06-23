@@ -1,0 +1,17 @@
+{
+  "name": "Cat Battles",
+  "short_name": "CatBattles",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000000",
+  "theme_color": "#000000",
+  "description": "Un jeu de combat de chats 2D rétro !",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
