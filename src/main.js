@@ -27,7 +27,6 @@ const btnCloseDialog = document.getElementById('btn-close-dialog');
 
 const buttonsToImplement = [
   'btn-play',
-  'btn-private',
   ...document.querySelectorAll('.drawer-btn:not(#btn-settings)')
 ];
 
