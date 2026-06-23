@@ -79,6 +79,38 @@ btnAdopt.addEventListener('click', () => {
   }
   sceneCatList.style.display = 'none';
   sceneAdopt.style.display = 'flex';
+  
+  // Réinitialiser le slider
+  const sliderType = document.getElementById('adopt-type-slider');
+  const displayType = document.getElementById('adopt-type-display');
+  sliderType.value = 1;
+  displayType.innerText = 'Base';
+  displayType.style.color = '#ffcc00';
+  sliderType.style.setProperty('--slider-color', '#ffcc00');
+});
+
+// Animation du slider
+const sliderType = document.getElementById('adopt-type-slider');
+const displayType = document.getElementById('adopt-type-display');
+
+const typeMapping = {
+  0: { name: 'Domestique', color: '#44aaff' },
+  1: { name: 'Base', color: '#ffcc00' },
+  2: { name: 'Sauvage', color: '#ff4444' }
+};
+
+sliderType.addEventListener('input', (e) => {
+  const val = e.target.value;
+  const config = typeMapping[val];
+  
+  displayType.innerText = config.name;
+  displayType.style.color = config.color;
+  sliderType.style.setProperty('--slider-color', config.color);
+  
+  // Animation de rebond
+  displayType.classList.remove('type-animated');
+  void displayType.offsetWidth; // déclencher un reflow
+  displayType.classList.add('type-animated');
 });
 
 btnCancelAdopt.addEventListener('click', () => {
@@ -91,7 +123,8 @@ btnCancelAdopt.addEventListener('click', () => {
 formAdopt.addEventListener('submit', (e) => {
   e.preventDefault();
   const name = document.getElementById('adopt-name').value;
-  const type = document.getElementById('adopt-type').value;
+  const sliderVal = document.getElementById('adopt-type-slider').value;
+  const type = typeMapping[sliderVal].name;
   const sprite = document.getElementById('adopt-sprite').value;
 
   let newCat;
@@ -226,6 +259,13 @@ let audioStarted = false;
 const loadingScreen = document.getElementById('loading-screen');
 const btnStart = document.getElementById('btn-start');
 const uiLayer = document.getElementById('ui-layer');
+
+// Random Background for lower screen
+const randBg = Math.floor(Math.random() * 4) + 1;
+const homeBgLower = document.getElementById('home-bg-lower');
+if (homeBgLower) {
+  homeBgLower.style.backgroundImage = `url('/sprites/bg/bg${randBg}.png')`;
+}
 
 btnStart.addEventListener('click', async () => {
   if (!audioStarted) {

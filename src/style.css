@@ -198,6 +198,22 @@ html, body {
   box-shadow: 2px 2px 0 #000;
 }
 
+/* Lower Background */
+#home-bg-lower {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 50%; /* Occupe la moitié inférieure de l'écran */
+  background-size: contain; /* Dezoom le background */
+  background-position: center bottom;
+  background-repeat: no-repeat;
+  z-index: 1; /* Derrière les boutons */
+  opacity: 0.8;
+  mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+}
+
 /* Logo Area */
 #logo-container {
   position: absolute;
@@ -237,6 +253,7 @@ html, body {
   flex-direction: column;
   align-items: center;
   gap: 20px; /* Espace entre JOUER et Liste Chats */
+  z-index: 10;
 }
 
 #btn-play {
@@ -293,6 +310,11 @@ html, body {
   background: rgba(255, 255, 255, 0.95);
   padding: 20px 10px;
   border-top: 6px solid #000;
+  width: 100%;
+  position: absolute;
+  bottom: 0;
+  box-sizing: border-box;
+  z-index: 10;
 }
 
 .drawer-btn {
@@ -482,6 +504,44 @@ dialog p {
 .retro-input:focus {
   outline: none;
   border-color: #ff4444;
+}
+
+/* Slider Type Adoption */
+#adopt-type-slider {
+  -webkit-appearance: none;
+  width: 100%;
+  height: 10px;
+  background: #eee;
+  border: 2px solid #000;
+  border-radius: 5px;
+  outline: none;
+  transition: background 0.3s;
+}
+
+#adopt-type-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  background: var(--slider-color, #ffcc00);
+  border: 3px solid #000;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background 0.3s, transform 0.1s;
+}
+
+#adopt-type-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.2);
+}
+
+/* Animations pour le label de type */
+@keyframes bounceType {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+.type-animated {
+  animation: bounceType 0.3s ease;
 }
 
 /* Cat List Items */

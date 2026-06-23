@@ -40,6 +40,9 @@
           <div id="player-name">Dresseur</div>
         </div>
 
+        <!-- Lower Background -->
+        <div id="home-bg-lower"></div>
+
         <!-- Logo Area -->
         <div id="logo-container">
           <div class="logo-ellipse"></div>
@@ -83,12 +86,11 @@
           <label for="adopt-name">Nom :</label>
           <input type="text" id="adopt-name" class="retro-input" required maxlength="12" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
           
-          <label for="adopt-type">Type :</label>
-          <select id="adopt-type" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
-            <option value="Base">Chat (Base)</option>
-            <option value="Domestique">Domestique</option>
-            <option value="Sauvage">Sauvage</option>
-          </select>
+          <div class="form-group">
+            <label for="adopt-type-slider">Type :</label>
+            <input type="range" id="adopt-type-slider" min="0" max="2" step="1" value="1" style="width: 100%;">
+            <div id="adopt-type-display" style="text-align: center; margin-top: 10px; font-weight: bold; transition: color 0.3s; color: #ffcc00; margin-bottom: 15px;">Base</div>
+          </div>
 
           <label for="adopt-sprite">Sprite :</label>
           <select id="adopt-sprite" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
