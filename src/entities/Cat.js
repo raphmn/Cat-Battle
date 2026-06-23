@@ -1,3 +1,8 @@
+// ==========================================
+// Entités Chat. Stats de base + variantes par type.
+// `level` sert d'affichage en combat et grimpe à chaque victoire.
+// ==========================================
+
 export class Cat {
   constructor(name, sprite = "") {
     this.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
@@ -5,7 +10,8 @@ export class Cat {
     this.sprite = sprite;
     this.type = "Base";
     this.item = null;
-    
+    this.level = 5;
+
     // Stats de base
     this.pv = 100;
     this.attack = 20;
@@ -21,6 +27,7 @@ export class Cat {
       sprite: this.sprite,
       type: this.type,
       item: this.item,
+      level: this.level,
       pv: this.pv,
       attack: this.attack,
       defense: this.defense,
