@@ -157,6 +157,7 @@
 .hp-num { font-size: 9px; text-align: right; margin-top: 4px; }
 
 .battle-ui {
+  width: 100%; /* sinon align-items:center du .scene rétrécit selon le texte */
   height: 42%;
   display: flex;
   flex-direction: column;
