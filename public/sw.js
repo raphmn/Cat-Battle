@@ -1,4 +1,4 @@
-const CACHE_NAME = 'catbattle-v2';
+const CACHE_NAME = 'catbattle-v3';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',

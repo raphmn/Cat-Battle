@@ -8,7 +8,7 @@ import { register, navigate } from '../core/sceneManager.js';
 import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
 import { generateBot } from '../data/levels.js';
-import { getCats, saveCats } from '../core/storage.js';
+import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
 import { playSfx, playTrack } from '../core/audio.js';
 
 const STAT_LABELS = { maxpv: 'PV', atk: 'ATK', def: 'DEF', vit: 'VIT' };
@@ -142,8 +142,9 @@ function promptPlayer() {
       btn.textContent = 'FUIR';
       return;
     }
-    if (act === 'abri' && !battle.isAbriAvailable('player')) {
-      btn.textContent = 'ABRI (X)';
+    const cd = battle.player.cooldowns[act];
+    if (cd) {
+      btn.textContent = `${ACTIONS[act].label} (${cd})`;
       btn.disabled = true;
     } else {
       btn.textContent = ACTIONS[act].label;
@@ -204,7 +205,15 @@ function shake(side) {
 
 function endBattle() {
   setActionsEnabled(false);
-  if (battle.result === 'win') return applyVictory();
+  const won = battle.result === 'win';
+  addHistoryEntry({
+    result: won ? 'win' : 'lose',
+    opponent: battle.enemy.name,
+    level: ctx.botLevel,
+    catName: battle.player.name,
+    ts: Date.now(),
+  });
+  if (won) return applyVictory();
   showResult('Défaite...', `${battle.player.name} est K.O.`, false);
 }
 

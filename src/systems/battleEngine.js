@@ -2,12 +2,13 @@
 // Moteur de combat tour par tour (CdC §5.3). Gère l'ÉTAT, pas le DOM.
 // La scène appelle playRound() et reçoit une liste d'ÉVÉNEMENTS à jouer.
 //
-// Règles (CdC) :
+// Règles :
 // - Ordre d'action déterminé par VIT (le plus rapide joue en premier).
 // - Dégâts : (atk × [0.45..0.95] − def × 0.30) × multiplicateur d'action.
 // - Critique : probabilité = vit / 350 → ×1.6 sur les dégâts.
-// - ABRI : bloque 100% des dégâts du tour, pas 2 tours consécutifs.
+// - ABRI : bloque 100% des dégâts du tour (prioritaire).
 // - COUP SPÉCIAL : ×1.55 de dégâts, ~22% de raté.
+// - ABRI et COUP SPÉCIAL : interdits deux tours de suite (noConsecutive).
 // ==========================================
 
 import { ACTIONS } from '../data/attacks.js';
@@ -25,7 +26,7 @@ function makeCombatant(stat, name, asset, lvl) {
     def: stat.def,
     vit: stat.vit,
     shielded: false, // ABRI actif ce tour
-    abriLocked: false, // ABRI utilisé au tour précédent => indisponible
+    cooldowns: {}, // actionId -> tours restants avant réutilisation
   };
 }
 
@@ -36,6 +37,10 @@ export class Battle {
     this.turn = 0;
     this.over = false;
     this.result = null; // 'win' | 'lose'
+  }
+
+  isAvailable(side, actionId) {
+    return !this[side].cooldowns[actionId];
   }
 
   critChance(c) {
@@ -58,10 +63,6 @@ export class Battle {
     return { dmg: Math.max(1, Math.round(dmg)), crit };
   }
 
-  isAbriAvailable(side) {
-    return !this[side].abriLocked;
-  }
-
   performAction(actorSide, actionId) {
     const actor = this[actorSide];
     const targetSide = actorSide === 'player' ? 'enemy' : 'player';
@@ -74,45 +75,45 @@ export class Battle {
 
     if (action.type === 'shield') {
       actor.shielded = true;
-      actor.abriLocked = true; // pas 2 tours de suite
       events.push({ type: 'message', text: `${actor.name} se met à l'ABRI !` });
-      return events;
+    } else {
+      const res = this.computeDamage(actor, target, action);
+      events.push({ type: 'attack', actorSide, text: `${actor.name} utilise ${action.label} !` });
+      if (res.miss) {
+        events.push({ type: 'message', text: 'Raté !' });
+      } else if (res.blocked) {
+        events.push({ type: 'message', text: `${target.name} est à l'abri : aucun dégât !` });
+      } else {
+        target.hp = Math.max(0, target.hp - res.dmg);
+        if (res.crit) events.push({ type: 'message', text: 'Coup critique !' });
+        events.push({ type: 'damage', targetSide, dmg: res.dmg });
+        if (target.hp <= 0) {
+          events.push({ type: 'faint', side: targetSide, text: `${target.name} est K.O. !` });
+        }
+      }
     }
 
-    // Une action offensive libère l'ABRI pour le tour suivant.
-    actor.abriLocked = false;
-
-    const res = this.computeDamage(actor, target, action);
-    events.push({ type: 'attack', actorSide, text: `${actor.name} utilise ${action.label} !` });
-
-    if (res.miss) {
-      events.push({ type: 'message', text: 'Raté !' });
-      return events;
-    }
-    if (res.blocked) {
-      events.push({ type: 'message', text: `${target.name} est à l'abri : aucun dégât !` });
-      return events;
-    }
-
-    target.hp = Math.max(0, target.hp - res.dmg);
-    if (res.crit) events.push({ type: 'message', text: 'Coup critique !' });
-    events.push({ type: 'damage', targetSide, dmg: res.dmg });
-    if (target.hp <= 0) {
-      events.push({ type: 'faint', side: targetSide, text: `${target.name} est K.O. !` });
-    }
+    // Verrou "pas 2 tours de suite" : indisponible au tour suivant.
+    if (action.noConsecutive) actor.cooldowns[actionId] = 2;
     return events;
+  }
+
+  tickCooldowns(c) {
+    for (const k of Object.keys(c.cooldowns)) {
+      c.cooldowns[k] -= 1;
+      if (c.cooldowns[k] <= 0) delete c.cooldowns[k];
+    }
   }
 
   // IA bot : varie ses actions, se protège quand il est bas.
   chooseEnemyAction() {
     const e = this.enemy;
+    const canSpecial = this.isAvailable('enemy', 'special');
+    const canAbri = this.isAvailable('enemy', 'abri');
     const r = Math.random();
-    if (!this.isAbriAvailable('enemy')) {
-      return r < 0.35 ? 'special' : 'griffer';
-    }
-    if (e.hp < e.maxpv * 0.3 && r < 0.4) return 'abri';
-    if (r < 0.3) return 'special';
-    if (r < 0.45) return 'abri';
+    if (canAbri && e.hp < e.maxpv * 0.3 && r < 0.4) return 'abri';
+    if (canSpecial && r < 0.3) return 'special';
+    if (canAbri && r < 0.45) return 'abri';
     return 'griffer';
   }
 
@@ -138,6 +139,8 @@ export class Battle {
       if (this[otherSide].hp <= 0) break;
     }
 
+    this.tickCooldowns(this.player);
+    this.tickCooldowns(this.enemy);
     this.turn++;
     if (this.enemy.hp <= 0) {
       this.over = true;

@@ -1,18 +1,37 @@
 // ==========================================
-// Niveaux de bot (CdC US07) : 3 difficultés aux stats croissantes.
-// À chaque combat un bot est généré ALÉATOIREMENT pour le niveau choisi
-// (US04) : nom + asset + type aléatoires, stats basées sur le niveau.
+// Niveaux de bot : difficulté croissante. À chaque combat un bot est
+// généré ALÉATOIREMENT pour le niveau choisi (US04) : nom + asset + type
+// aléatoires, stats basées sur le niveau (US07).
+// Les niveaux sont regroupés en 3 bandes : Facile / Moyen / Difficile.
 // ==========================================
 
-const NAMES = ['Minou', 'Bandit', 'Crocs', 'Tigrou', 'Moustache', 'Ombre', 'Néko', 'Félix', 'Patou'];
+const NAMES = ['Minou', 'Bandit', 'Crocs', 'Tigrou', 'Moustache', 'Ombre', 'Néko', 'Félix', 'Patou', 'Roux', 'Zorro'];
 const ASSETS = ['🐱', '🐈', '🐈‍⬛', '😼', '😾', '🐯', '🦁'];
 const TYPES = ['domestique', 'base', 'sauvage'];
 
-export const BOT_LEVELS = [
-  { level: 1, label: 'Facile', base: { maxpv: 60, atk: 14, def: 6, vit: 10 }, jitter: 3 },
-  { level: 2, label: 'Moyen', base: { maxpv: 95, atk: 22, def: 12, vit: 16 }, jitter: 4 },
-  { level: 3, label: 'Difficile', base: { maxpv: 135, atk: 32, def: 18, vit: 24 }, jitter: 5 },
-];
+export const TOTAL_LEVELS = 9;
+
+function bandLabel(level) {
+  if (level <= 3) return 'Facile';
+  if (level <= 6) return 'Moyen';
+  return 'Difficile';
+}
+
+function makeLevelConfig(level) {
+  return {
+    level,
+    label: bandLabel(level),
+    base: {
+      maxpv: 45 + level * 13,
+      atk: 9 + level * 3,
+      def: 3 + level * 2,
+      vit: 7 + level * 2,
+    },
+    jitter: 2 + Math.floor(level / 3),
+  };
+}
+
+export const BOT_LEVELS = Array.from({ length: TOTAL_LEVELS }, (_, i) => makeLevelConfig(i + 1));
 
 const pickRand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const jitter = (v, j) => v + Math.round((Math.random() * 2 - 1) * j);

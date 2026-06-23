@@ -17,8 +17,8 @@ export function initLevelSelect() {
   root.style.display = 'none';
   root.innerHTML = `
     <button class="btn-back" id="btn-back-levels">⬅ Retour</button>
-    <div class="scene-title">Difficulté</div>
-    <div class="level-grid level-grid--difficulty"></div>
+    <div class="scene-title">Niveaux</div>
+    <div class="level-grid"></div>
   `;
   document.getElementById('game-container').appendChild(root);
   register('levelSelect', root, 'flex');
@@ -43,19 +43,20 @@ export function initLevelSelect() {
   });
 }
 
+const BAND_COLORS = { Facile: '#58a060', Moyen: '#d8a000', Difficile: '#e05050' };
+
 function renderLevels() {
   grid.innerHTML = '';
-  const colors = { 1: '#58a060', 2: '#d8a000', 3: '#e05050' };
 
   BOT_LEVELS.forEach((lv) => {
     const b = lv.base;
     const btn = document.createElement('button');
-    btn.className = 'level-btn level-btn--diff';
-    btn.style.boxShadow = `inset 0 0 0 4px ${colors[lv.level]}, 4px 4px 0 rgba(0,0,0,.5)`;
+    btn.className = 'level-btn';
+    btn.style.boxShadow = `inset 0 0 0 4px ${BAND_COLORS[lv.label]}, 4px 4px 0 rgba(0,0,0,.5)`;
     btn.innerHTML = `
       <div class="lvl-num">Niv.${lv.level}</div>
       <div class="lvl-enemy">${lv.label}</div>
-      <div class="lvl-meta">PV ${b.maxpv} · ATK ${b.atk} · DEF ${b.def} · VIT ${b.vit}</div>
+      <div class="lvl-meta">PV ${b.maxpv} · ATK ${b.atk}<br>DEF ${b.def} · VIT ${b.vit}</div>
     `;
     btn.addEventListener('click', () => openPicker(lv.level));
     grid.appendChild(btn);

@@ -30,12 +30,8 @@ export function initHome() {
   document.getElementById('music-volume').addEventListener('input', (e) => setMusicVolume(e.target.value));
   document.getElementById('sfx-volume').addEventListener('input', (e) => setSfxVolume(e.target.value));
 
-  // Boutons "à implémenter" (ex : Statistiques)
-  const impl = document.getElementById('impl-dialog');
-  document.getElementById('btn-close-dialog').addEventListener('click', () => impl.close());
-  document.querySelectorAll('.drawer-btn:not(#btn-settings)').forEach((btn) => {
-    btn.addEventListener('click', () => impl.showModal());
-  });
+  // Statistiques : historique des combats
+  document.getElementById('btn-stats').addEventListener('click', () => navigate('stats'));
 
   // Fond aléatoire pour la moitié basse de l'écran d'accueil
   const randBg = Math.floor(Math.random() * 4) + 1;

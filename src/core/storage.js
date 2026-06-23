@@ -8,7 +8,10 @@
 export const KEYS = {
   playerName: 'catbattle_player_name',
   catList: 'cat_list',
+  history: 'catbattle_history',
 };
+
+const HISTORY_MAX = 50;
 
 // --- Profil joueur ---
 export function getPlayerName() {
@@ -55,4 +58,15 @@ export function deleteCat(index) {
   const cats = getCats();
   cats.splice(index, 1);
   saveCats(cats);
+}
+
+// --- Historique des combats (CdC US11) ---
+export function getHistory() {
+  return JSON.parse(localStorage.getItem(KEYS.history) || '[]');
+}
+
+export function addHistoryEntry(entry) {
+  const h = getHistory();
+  h.unshift(entry); // le plus récent en premier
+  localStorage.setItem(KEYS.history, JSON.stringify(h.slice(0, HISTORY_MAX)));
 }

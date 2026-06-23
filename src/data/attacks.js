@@ -19,11 +19,13 @@ export const ACTIONS = {
     type: 'damage',
     mult: 1.55,
     missChance: 0.22,
+    noConsecutive: true, // pas 2 tours de suite
   },
   abri: {
     id: 'abri',
     label: 'ABRI',
     type: 'shield',
+    noConsecutive: true, // pas 2 tours de suite
   },
 };
 

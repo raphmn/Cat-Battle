@@ -7,6 +7,7 @@ import { initHome } from './scenes/home.js';
 import { initCatList } from './scenes/catList.js';
 import { initLevelSelect } from './scenes/levelSelect.js';
 import { initBattle } from './scenes/battle.js';
+import { initStats } from './scenes/stats.js';
 
 // ==========================================
 // Enregistrement des scènes définies dans index.html
@@ -22,6 +23,7 @@ initHome();
 initCatList();
 initLevelSelect();
 initBattle();
+initStats();
 
 // ==========================================
 // Écran de chargement & démarrage
