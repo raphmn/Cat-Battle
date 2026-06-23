@@ -27,7 +27,8 @@ const btnCloseDialog = document.getElementById('btn-close-dialog');
 
 const buttonsToImplement = [
   'btn-play',
-  ...document.querySelectorAll('.drawer-btn:not(#btn-settings)')
+  document.getElementById('btn-adopt'),
+  ...document.querySelectorAll('.drawer-btn:not(#btn-settings):not(#btn-cat-list)')
 ];
 
 buttonsToImplement.forEach(idOrEl => {
@@ -41,6 +42,36 @@ buttonsToImplement.forEach(idOrEl => {
 
 btnCloseDialog.addEventListener('click', () => {
   dialog.close();
+});
+
+// ==========================================
+// 2.5 Scene Liste Chats
+// ==========================================
+const sceneCatList = document.getElementById('scene-cat-list');
+const btnCatList = document.getElementById('btn-cat-list');
+const btnBackCatList = document.getElementById('btn-back-cat-list');
+const catListEmptyMsg = document.getElementById('cat-list-empty-msg');
+const catListItems = document.getElementById('cat-list-items');
+
+btnCatList.addEventListener('click', () => {
+  uiLayer.style.display = 'none';
+  sceneCatList.style.display = 'flex';
+  
+  // Check LocalStorage
+  const cats = JSON.parse(localStorage.getItem('cat_list') || '[]');
+  if (cats.length === 0) {
+    catListEmptyMsg.style.display = 'block';
+    catListItems.style.display = 'none';
+  } else {
+    catListEmptyMsg.style.display = 'none';
+    catListItems.style.display = 'block';
+    // Todo plus tard: render cats
+  }
+});
+
+btnBackCatList.addEventListener('click', () => {
+  sceneCatList.style.display = 'none';
+  uiLayer.style.display = 'flex';
 });
 
 // ==========================================

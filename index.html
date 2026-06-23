@@ -54,10 +54,24 @@
         <!-- Drawer Menu -->
         <div id="bottom-drawer">
           <button class="drawer-btn action-btn">Statistiques</button>
-          <button class="drawer-btn action-btn">Liste Chats</button>
+          <button id="btn-cat-list" class="drawer-btn action-btn">Liste Chats</button>
           <button id="btn-settings" class="drawer-btn action-btn">Paramètres</button>
         </div>
 
+      </div>
+
+      <!-- Cat List Scene (Hidden initially) -->
+      <div id="scene-cat-list" class="scene" style="display: none;">
+        <button id="btn-back-cat-list" class="btn-back">⬅ Retour</button>
+        
+        <div class="scene-title">Vos Chats</div>
+        
+        <div class="scene-content">
+          <p id="cat-list-empty-msg">Aucun chat</p>
+          <ul id="cat-list-items" style="display: none;"></ul>
+        </div>
+        
+        <button id="btn-adopt" class="action-btn">Adopter</button>
       </div>
 
       <!-- Sound Settings Dialog -->

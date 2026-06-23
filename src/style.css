@@ -285,6 +285,83 @@ html, body {
   color: #ff4444;
 }
 
+/* === SCENES === */
+.scene {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 20;
+  background-color: #000;
+  color: #fff;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  padding: 20px;
+  pointer-events: auto;
+}
+
+.scene-title {
+  font-size: 20px;
+  margin-top: 60px;
+  text-shadow: 2px 2px 0 #ff4444;
+  text-align: center;
+}
+
+.scene-content {
+  flex-grow: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  line-height: 1.5;
+}
+
+.btn-back {
+  position: absolute;
+  top: 30px;
+  left: 20px;
+  background: transparent;
+  color: #fff;
+  border: none;
+  font-family: 'Press Start 2P', monospace;
+  font-size: 12px;
+  cursor: pointer;
+  text-shadow: 2px 2px 0 #000;
+  transition: transform 0.1s;
+}
+
+.btn-back:hover {
+  color: #ffcc00;
+}
+
+.btn-back:active {
+  transform: translateX(-5px);
+}
+
+#btn-adopt {
+  font-size: 16px;
+  padding: 20px 40px;
+  background-color: #fff;
+  color: #333;
+  border: 4px solid #000;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 4px #44ff44, 4px 4px 0px 0px rgba(0,0,0,0.5); 
+  text-shadow: none;
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
+  margin-bottom: 20px;
+}
+
+#btn-adopt:active {
+  transform: translate(2px, 2px) scale(1);
+  background-color: #ebffeb;
+  box-shadow: inset 0 0 0 4px #00cc00, 2px 2px 0px 0px rgba(0,0,0,0.5);
+}
+
 /* Dialog Box (Pokemon text box style) */
 dialog {
   background-color: #fff;
