@@ -49,12 +49,12 @@
         <!-- Center Menu -->
         <div id="center-menu">
           <button id="btn-play" class="action-btn">JOUER</button>
+          <button id="btn-cat-list" class="action-btn">Liste Chats</button>
         </div>
 
         <!-- Drawer Menu -->
         <div id="bottom-drawer">
           <button class="drawer-btn action-btn">Statistiques</button>
-          <button id="btn-cat-list" class="drawer-btn action-btn">Liste Chats</button>
           <button id="btn-settings" class="drawer-btn action-btn">Paramètres</button>
         </div>
 
@@ -66,12 +66,45 @@
         
         <div class="scene-title">Vos Chats</div>
         
-        <div class="scene-content">
+        <div class="scene-content" style="flex-direction: column; justify-content: flex-start; padding-top: 20px; overflow-y: auto;">
           <p id="cat-list-empty-msg">Aucun chat</p>
-          <ul id="cat-list-items" style="display: none;"></ul>
+          <div id="cat-list-items" style="display: none; width: 100%; max-width: 400px; padding-bottom: 80px;"></div>
         </div>
         
-        <button id="btn-adopt" class="action-btn">Adopter</button>
+        <button id="btn-adopt" class="action-btn" style="position: absolute; bottom: 20px;">Adopter</button>
+      </div>
+
+      <!-- Adopt Cat Scene (Hidden initially) -->
+      <div id="scene-adopt" class="scene" style="display: none;">
+        <div class="scene-title">Adopter un Chat</div>
+        
+        <form id="form-adopt" class="retro-box" style="padding: 20px; width: 80%; max-width: 320px; margin-top: 20px; text-align: left; color: #000; font-size: 12px; line-height: 2;">
+          
+          <label for="adopt-name">Nom :</label>
+          <input type="text" id="adopt-name" class="retro-input" required maxlength="12" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+          
+          <label for="adopt-type">Type :</label>
+          <select id="adopt-type" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+            <option value="Base">Chat (Base)</option>
+            <option value="Domestique">Domestique</option>
+            <option value="Sauvage">Sauvage</option>
+          </select>
+
+          <label for="adopt-sprite">Sprite :</label>
+          <select id="adopt-sprite" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+            <option value="">Aucun</option>
+          </select>
+
+          <label for="adopt-item">Objet :</label>
+          <select id="adopt-item" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 25px;">
+            <option value="">Vide</option>
+          </select>
+
+          <div style="display: flex; justify-content: space-between;">
+            <button type="button" id="btn-cancel-adopt" class="retro-button" style="font-size: 10px; padding: 10px;">Annuler</button>
+            <button type="submit" id="btn-submit-adopt" class="retro-button" style="font-size: 10px; padding: 10px; background-color: #44ff44;">Ajouter</button>
+          </div>
+        </form>
       </div>
 
       <!-- Sound Settings Dialog -->
@@ -92,6 +125,15 @@
       <dialog id="impl-dialog">
         <p>⚠️ Cette fonctionnalité reste à implémenter.</p>
         <button id="btn-close-dialog">Fermer</button>
+      </dialog>
+
+      <!-- Delete Confirmation Dialog -->
+      <dialog id="confirm-delete-dialog" style="text-align: center;">
+        <p style="margin-bottom: 20px;">Voulez-vous vraiment relâcher ce chat ?</p>
+        <div style="display: flex; justify-content: space-around;">
+          <button id="btn-cancel-delete" class="retro-button" style="background-color: #ccc; font-size: 10px; padding: 10px 20px;">Non</button>
+          <button id="btn-confirm-delete" class="retro-button" style="background-color: #ff4444; color: white; font-size: 10px; padding: 10px 20px;">Oui</button>
+        </div>
       </dialog>
 
     </div>
