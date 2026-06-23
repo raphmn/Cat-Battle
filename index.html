@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+    <title>Cat Battles</title>
+  </head>
+  <body>
+    <!-- Overlay de rotation pour mobile paysage -->
+    <div id="rotate-overlay">
+      <div>📱 Veuillez tourner votre appareil en mode portrait.</div>
+    </div>
+
+    <!-- Conteneur principal du jeu -->
+    <div id="game-container">
+      
+      <!-- Audio Player -->
+      <audio id="bgm" loop>
+        <source src="/audio/ost1.mp3" type="audio/mpeg">
+      </audio>
+
+      <!-- Loading Screen -->
+      <div id="loading-screen">
+        <div id="loading-text">Chargement en cours...</div>
+        <button id="btn-start">Click to Start</button>
+      </div>
+
+      <!-- UI Layer (Hidden initially) -->
+      <div id="ui-layer" style="display: none;">
+        
+        <!-- Player Profile -->
+        <div id="player-profile" title="Changer de nom">
+          <div class="pp-icon">🐱</div>
+          <div id="player-name">Dresseur</div>
+        </div>
+
+        <!-- Center Menu -->
+        <div id="center-menu">
+          <button id="btn-play" class="action-btn">JOUER</button>
+          <button id="btn-private" class="action-btn">Private room</button>
+        </div>
+
+        <!-- Drawer Menu -->
+        <div id="bottom-drawer">
+          <button class="drawer-btn action-btn">Statistiques</button>
+          <button class="drawer-btn action-btn">Liste Chats</button>
+          <button id="btn-settings" class="drawer-btn action-btn">Paramètres</button>
+        </div>
+
+      </div>
+
+      <!-- Sound Settings Dialog -->
+      <dialog id="sound-dialog">
+        <p>Paramètres Audio</p>
+        <div class="slider-container">
+          <label for="music-volume">Musique :</label>
+          <input type="range" id="music-volume" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <div class="slider-container">
+          <label for="sfx-volume">Effets :</label>
+          <input type="range" id="sfx-volume" min="0" max="1" step="0.1" value="0.5">
+        </div>
+        <button id="btn-close-sound">Fermer</button>
+      </dialog>
+
+      <!-- Dialog Box for "À implémenter" -->
+      <dialog id="impl-dialog">
+        <p>⚠️ Cette fonctionnalité reste à implémenter.</p>
+        <button id="btn-close-dialog">Fermer</button>
+      </dialog>
+
+    </div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
