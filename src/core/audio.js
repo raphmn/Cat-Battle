@@ -38,6 +38,49 @@ export function playSfx() {
   sfx.play().catch((err) => console.warn('SFX play failed:', err));
 }
 
+// --- Effets de combat synthétisés (WebAudio, pas d'asset requis) ---
+let actx = null;
+function audioCtx() {
+  if (!actx) {
+    const AC = window.AudioContext || window.webkitAudioContext;
+    if (AC) actx = new AC();
+  }
+  if (actx && actx.state === 'suspended') actx.resume().catch(() => {});
+  return actx;
+}
+
+function playTone(freq, dur, type = 'square', slideTo = null) {
+  const c = audioCtx();
+  if (!c) return;
+  try {
+    const osc = c.createOscillator();
+    const gain = c.createGain();
+    osc.type = type;
+    osc.frequency.setValueAtTime(freq, c.currentTime);
+    if (slideTo) osc.frequency.linearRampToValueAtTime(slideTo, c.currentTime + dur);
+    const peak = Math.max(0.0001, sfxVol * 0.3);
+    gain.gain.setValueAtTime(0.0001, c.currentTime);
+    gain.gain.exponentialRampToValueAtTime(peak, c.currentTime + 0.01);
+    gain.gain.exponentialRampToValueAtTime(0.0001, c.currentTime + dur);
+    osc.connect(gain);
+    gain.connect(c.destination);
+    osc.start();
+    osc.stop(c.currentTime + dur);
+  } catch (e) {
+    /* ignore */
+  }
+}
+
+export function sfxHit() {
+  playTone(180, 0.12, 'square');
+}
+export function sfxSpecial() {
+  playTone(320, 0.2, 'sawtooth', 540);
+}
+export function sfxFaint() {
+  playTone(300, 0.5, 'sine', 70);
+}
+
 // Change de piste (menu <-> combat) en gardant le volume courant.
 export function playTrack(key) {
   if (!bgm) return;

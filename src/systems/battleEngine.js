@@ -78,7 +78,7 @@ export class Battle {
       events.push({ type: 'message', text: `${actor.name} se met à l'ABRI !` });
     } else {
       const res = this.computeDamage(actor, target, action);
-      events.push({ type: 'attack', actorSide, text: `${actor.name} utilise ${action.label} !` });
+      events.push({ type: 'attack', actorSide, actionId, text: `${actor.name} utilise ${action.label} !` });
       if (res.miss) {
         events.push({ type: 'message', text: 'Raté !' });
       } else if (res.blocked) {

@@ -9,7 +9,9 @@ import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
 import { generateBot } from '../data/levels.js';
 import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
-import { playSfx, playTrack } from '../core/audio.js';
+import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint } from '../core/audio.js';
+import { applyItemBonus } from '../data/items.js';
+import { mountWebGLBackground } from '../core/webglBackground.js';
 
 const STAT_LABELS = { maxpv: 'PV', atk: 'ATK', def: 'DEF', vit: 'VIT' };
 const SKILLS = ['atk', 'def', 'vit']; // compétences gagnées après victoire
@@ -61,6 +63,7 @@ export function initBattle() {
   `;
   document.getElementById('game-container').appendChild(root);
   register('battle', root, 'flex');
+  mountWebGLBackground(root.querySelector('.battle-field')); // repli CSS auto si WebGL absent
 
   els = {
     enemyName: root.querySelector('.hud-enemy .bname'),
@@ -95,7 +98,12 @@ export function startBattle(botLevel, catIndex) {
 
   const bot = generateBot(botLevel);
   ctx = { botLevel, catIndex };
-  battle = new Battle(cat, bot);
+  // Bonus d'objet appliqué au combat (non permanent).
+  const boosted = {
+    ...cat,
+    ...applyItemBonus({ maxpv: cat.maxpv, atk: cat.atk, def: cat.def, vit: cat.vit }, cat.item),
+  };
+  battle = new Battle(boosted, bot);
   busy = false;
 
   els.enemyName.textContent = battle.enemy.name;
@@ -105,6 +113,10 @@ export function startBattle(botLevel, catIndex) {
   els.playerLevel.textContent = 'Niv.' + battle.player.lvl;
   els.playerSprite.textContent = battle.player.asset;
   els.result.style.display = 'none';
+
+  // Réinitialise les classes d'animation + entrée du bot.
+  els.enemySprite.className = 'sprite sprite-enemy enter';
+  els.playerSprite.className = 'sprite sprite-player';
 
   updateHud();
   setActionsEnabled(false);
@@ -180,11 +192,22 @@ function handleFlee() {
 
 async function playEvents(events) {
   for (const ev of events) {
-    if (ev.type === 'attack' || ev.type === 'message' || ev.type === 'faint') {
+    if (ev.type === 'attack') {
+      setMessage(ev.text);
+      lunge(ev.actorSide);
+      if (ev.actionId === 'special') sfxSpecial();
+      await wait(900);
+    } else if (ev.type === 'faint') {
+      setMessage(ev.text);
+      faint(ev.side);
+      sfxFaint();
+      await wait(900);
+    } else if (ev.type === 'message') {
       setMessage(ev.text);
       await wait(900);
     } else if (ev.type === 'damage') {
       shake(ev.targetSide);
+      sfxHit();
       updateHud();
       await wait(550);
     }
@@ -201,6 +224,17 @@ function shake(side) {
   const el = side === 'player' ? els.playerSprite : els.enemySprite;
   el.classList.add('hit');
   setTimeout(() => el.classList.remove('hit'), 300);
+}
+
+function lunge(side) {
+  const el = side === 'player' ? els.playerSprite : els.enemySprite;
+  el.classList.add('lunge');
+  setTimeout(() => el.classList.remove('lunge'), 400);
+}
+
+function faint(side) {
+  const el = side === 'player' ? els.playerSprite : els.enemySprite;
+  el.classList.add('faint');
 }
 
 function endBattle() {

@@ -6,6 +6,7 @@
 import { navigate } from '../core/sceneManager.js';
 import { getCats, addCat, deleteCat } from '../core/storage.js';
 import { Cat, DomesticCat, WildCat } from '../entities/Cat.js';
+import { ITEMS, itemLabel } from '../data/items.js';
 
 // slider 0/1/2 -> type stocké + libellé affiché
 const TYPE_MAPPING = {
@@ -26,6 +27,7 @@ export function initCatList() {
   const sliderType = document.getElementById('adopt-type-slider');
   const displayType = document.getElementById('adopt-type-display');
   const assetSelect = document.getElementById('adopt-sprite');
+  const itemSelect = document.getElementById('adopt-item');
   const confirmDeleteDialog = document.getElementById('confirm-delete-dialog');
 
   // Sprites (emoji) disponibles à l'adoption
@@ -34,6 +36,15 @@ export function initCatList() {
     opt.value = s;
     opt.textContent = s;
     assetSelect.appendChild(opt);
+  });
+
+  // Objets équipables (le premier <option> "Vide" est déjà dans le HTML)
+  Object.values(ITEMS).forEach((item) => {
+    if (!item.id) return;
+    const opt = document.createElement('option');
+    opt.value = item.id;
+    opt.textContent = `${item.icon} ${item.name}`;
+    itemSelect.appendChild(opt);
   });
 
   window.addEventListener('scene:change', (e) => {
@@ -80,6 +91,7 @@ export function initCatList() {
     if (type === 'domestique') newCat = new DomesticCat(name, asset);
     else if (type === 'sauvage') newCat = new WildCat(name, asset);
     else newCat = new Cat(name, asset);
+    newCat.item = itemSelect.value || null;
 
     addCat(newCat.toJSON());
     formAdopt.reset();
@@ -133,9 +145,11 @@ function renderCatList() {
 
     const info = document.createElement('div');
     info.className = 'cat-card-info';
+    const itemTxt = itemLabel(cat.item);
     info.innerHTML = `
       <div class="cat-card-name">${cat.asset || ''} ${cat.name}</div>
       <div style="font-size:8px; color:#555;">${capitalize(cat.type)} · Niv.${cat.lvl} · ${cat.wins} victoire(s)</div>
+      ${itemTxt ? `<div class="cat-card-item">${itemTxt}</div>` : ''}
     `;
 
     const statContainer = document.createElement('div');
