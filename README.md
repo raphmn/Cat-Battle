@@ -12,11 +12,16 @@ Un jeu de combat rétro de chats au tour par tour, développé sous forme de **P
     *   **Domestique** (Style "Tank") : Bonus de PV et DEF, mais malus d'ATK et VIT.
     *   **Sauvage** (Style "Offensif") : Bonus d'ATK et VIT, mais malus de PV et DEF.
 *   **Équipements par Glisser-Déposer (Drag & Drop)** : Équipez vos chats de nourriture ou de jouets (jusqu'à 2 objets par chat) pour altérer leurs statistiques en combat.
-*   **Moteur de Combat au Tour par Tour** : Affrontez des bots sur 9 niveaux de difficulté classés en 3 catégories (*Facile*, *Moyen*, *Difficile*).
+*   **Modes de Jeu de Combat** : 
+    *   **Mode Campagne** : Affrontez des bots sur 9 niveaux de difficulté classés en 3 catégories (*Facile*, *Moyen*, *Difficile*).
+    *   **Mode Aléatoire** : Lancez un combat contre un bot généré avec des statistiques et un visuel totalement aléatoires pour un défi unique.
 *   **Progression & Niveaux** : Gagnez des combats pour augmenter de façon permanente les statistiques de votre chat et monter de niveau tous les 3 combats remportés.
 *   **Sauvegarde Locale Persistante** : Toute votre progression (chats adoptés, statistiques, historique des combats et nom de dresseur) est sauvegardée dans le navigateur via `localStorage`.
 *   **Historique des Combats (Statistiques)** : Un récapitulatif détaillé de vos victoires, défaites et combats passés.
-*   **Immersion & Audio** : Bande-sonore rétro de combat et effets sonores activables avec gestion fine du volume.
+*   **Immersion Visuelle & Audio** : 
+    *   Effets sonores et bande-sonore rétro de combat activables avec gestion fine du volume.
+    *   Effets visuels animés (FX) en combat : marques de griffes animées en SVG (GRIFFER), ondes de choc et explosions (COUP SPÉCIAL), bouclier protecteur (ABRI).
+    *   Fond d'écran d'accueil avec météo dynamique aléatoire (jour, coucher de soleil, nuit, hiver) et barre de navigation (drawer) modernisée (Historique, Audio, Quitter).
 *   **Background WebGL** : Effet de fond dynamique WebGL en combat (avec repli CSS fluide si WebGL n'est pas disponible).
 *   **PWA Ready** : Installable sur mobile et ordinateur avec support du mode hors-ligne grâce à un Service Worker.
 
@@ -34,12 +39,12 @@ Les combats sont régis par les statistiques courantes des chats (calculées à 
 
 ### 2. Actions disponibles
 *   **GRIFFER** : Attaque standard infligeant des dégâts normaux. Peut infliger un coup critique (dégâts ×1.6) basé sur une chance dérivée de la vitesse ($\text{chance} = \frac{\text{VIT}}{350}$).
-*   **COUP SPÉCIAL** : Inflige des dégâts accrus (multiplicateur ×1.55) mais présente une probabilité d'échec de 22%. Indisponible deux tours d'affilée.
+*   **COUP SPÉCIAL** : Inflige des dégâts accrus (multiplicateur ×1.55) mais présente une probabilité d'échec de 22% et coûte 5 PV à l'attaquant. Indisponible deux tours d'affilée.
 *   **ABRI** : Rend le chat insensible à toutes les attaques pour le tour actuel. Cette action est toujours prioritaire sur l'ordre de vitesse. Indisponible deux tours d'affilée.
 *   **FUIR** : Permet de quitter le combat immédiatement sans victoire ni défaite enregistrée.
 
 ### 3. Formule de calcul des dégâts
-$$\text{Dégâts} = (\text{ATK} \times \text{FacteurAléatoire}[0.45..0.95] - \text{DEF} \times 0.30) \times \text{MultiplicateurAction}$$
+$$\text{Dégâts} = (\text{ATK} \times \text{FacteurAléatoire}[0.65..1.15] - \text{DEF} \times 0.20) \times \text{MultiplicateurAction}$$
 *(Les dégâts minimums sont de 1 PV. Si coup critique, le résultat final est multiplié par 1.6)*
 
 ### 4. Récompenses de Victoires & Niveaux
