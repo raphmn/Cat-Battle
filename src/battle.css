@@ -210,9 +210,9 @@
 .bttn-action {
   font-family: 'Press Start 2P', monospace;
   font-size: 10px;
-  line-height: 1.4;
+  line-height: 1.2;
   text-align: center;
-  padding: 4px;
+  padding: 8px 6px;
   cursor: pointer;
   border: 4px solid #000;
   border-radius: 10px;
@@ -220,6 +220,24 @@
   text-transform: uppercase;
   box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
   transition: transform 0.08s, box-shadow 0.08s, filter 0.1s;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+}
+.bttn-action .action-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 800;
+}
+.bttn-action .action-desc {
+  display: block;
+  font-size: 7px;
+  line-height: 1.2;
+  opacity: 0.9;
+  text-transform: none;
+  font-family: 'Press Start 2P', monospace;
 }
 .bttn-action[data-act='griffer'] { background: #e86850; }
 .bttn-action[data-act='special'] { background: #9858a0; }

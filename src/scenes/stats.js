@@ -15,7 +15,7 @@ export function initStats() {
   root.style.display = 'none';
   root.innerHTML = `
     <button class="btn-back" id="btn-back-stats">⬅ Retour</button>
-    <div class="scene-title">Statistiques</div>
+    <div class="scene-title">Historique</div>
     <div class="stats-summary"></div>
     <div class="history-list"></div>
   `;

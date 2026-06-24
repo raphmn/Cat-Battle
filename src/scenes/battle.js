@@ -148,20 +148,55 @@ function setActionsEnabled(on) {
   els.actions.classList.toggle('locked', !on);
 }
 
+function getDamageRange(attacker, defender, action) {
+  if (!attacker || !defender || action.type !== 'damage') return null;
+  const minBase = attacker.atk * 0.65 - defender.def * 0.2;
+  const maxBase = attacker.atk * 1.15 - defender.def * 0.2;
+  const minDmg = Math.max(1, Math.round(minBase * (action.mult || 1)));
+  const maxDmg = Math.max(1, Math.round(maxBase * (action.mult || 1)));
+  return [minDmg, maxDmg];
+}
+
+function setButtonContent(btn, titleText, descText) {
+  const act = btn.dataset.act;
+  btn.innerHTML = '';
+  if (act) btn.dataset.act = act;
+  const titleEl = document.createElement('span');
+  titleEl.className = 'action-label';
+  titleEl.textContent = titleText;
+  const descEl = document.createElement('span');
+  descEl.className = 'action-desc';
+  descEl.textContent = descText;
+  btn.append(titleEl, descEl);
+}
+
 function promptPlayer() {
   setMessage(`Que fait ${battle.player.name} ?`);
   els.actionBtns.forEach((btn) => {
     const act = btn.dataset.act;
     if (act === 'flee') {
-      btn.textContent = 'FUIR';
+      setButtonContent(btn, 'Quitter le combat', 'Retour au menu');
+      btn.disabled = false;
       return;
     }
+
+    const action = ACTIONS[act];
+    const titleText = action.label;
+    let descText = action.description || '';
+    const range = getDamageRange(battle.player, battle.enemy, action);
+    if (range) {
+      const [minDmg, maxDmg] = range;
+      descText = minDmg === maxDmg ? `${minDmg} dégâts` : `${minDmg}-${maxDmg} dégâts`;
+      if (action.missChance) descText += ' · raté possible';
+      if (action.selfCost) descText += ` · -${action.selfCost} PV`;
+    }
+
     const cd = battle.player.cooldowns[act];
     if (cd) {
-      btn.textContent = `${ACTIONS[act].label} (${cd})`;
+      setButtonContent(btn, titleText, `CD ${cd}`);
       btn.disabled = true;
     } else {
-      btn.textContent = ACTIONS[act].label;
+      setButtonContent(btn, titleText, descText);
       btn.disabled = false;
     }
   });

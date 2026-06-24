@@ -12,6 +12,7 @@ export const ACTIONS = {
     label: 'GRIFFER',
     type: 'damage',
     mult: 1.0,
+    description: 'Dégâts normaux infligés selon l’ATK du chat.',
   },
   special: {
     id: 'special',
@@ -20,12 +21,15 @@ export const ACTIONS = {
     mult: 1.55,
     missChance: 0.22,
     noConsecutive: true, // pas 2 tours de suite
+    selfCost: 5,
+    description: 'Dégâts plus puissants (×1.55) avec ~22% de chance de rater. Coûte 5 PV.',
   },
   abri: {
     id: 'abri',
     label: 'ABRI',
     type: 'shield',
     noConsecutive: true, // pas 2 tours de suite
+    description: 'Protège contre tous les dégâts du tour actuel.',
   },
 };
 

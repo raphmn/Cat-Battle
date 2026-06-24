@@ -54,7 +54,7 @@ export class Battle {
     if (defender.shielded) {
       return { blocked: true, dmg: 0, crit: false };
     }
-    let dmg = (attacker.atk * rand(0.45, 0.95) - defender.def * 0.3) * (action.mult || 1);
+    let dmg = (attacker.atk * rand(0.65, 1.15) - defender.def * 0.2) * (action.mult || 1);
     let crit = false;
     if (Math.random() < this.critChance(attacker)) {
       dmg *= 1.6;
