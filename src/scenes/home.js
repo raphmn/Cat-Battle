@@ -3,8 +3,9 @@
 // ==========================================
 
 import { navigate } from '../core/sceneManager.js';
-import { getPlayerName, setPlayerName } from '../core/storage.js';
+import { getPlayerName, setPlayerName, getCats } from '../core/storage.js';
 import { setMusicVolume, setSfxVolume } from '../core/audio.js';
+import { startRandomBattle } from './levelSelect.js';
 
 export function initHome() {
   const nameEl = document.getElementById('player-name');
@@ -20,7 +21,15 @@ export function initHome() {
   });
 
   // Menu principal
-  document.getElementById('btn-play').addEventListener('click', () => navigate('levelSelect'));
+  // Campagne : si aucun chat, on redirige vers la liste pour en créer un.
+  document.getElementById('btn-play').addEventListener('click', () => {
+    navigate(getCats().length === 0 ? 'catList' : 'levelSelect');
+  });
+  // Mode aléatoire : adversaire aux stats totalement aléatoires.
+  document.getElementById('btn-random').addEventListener('click', () => {
+    if (getCats().length === 0) navigate('catList');
+    else startRandomBattle();
+  });
   document.getElementById('btn-cat-list').addEventListener('click', () => navigate('catList'));
 
   // Paramètres audio
@@ -32,6 +41,15 @@ export function initHome() {
 
   // Statistiques : historique des combats
   document.getElementById('btn-stats').addEventListener('click', () => navigate('stats'));
+
+  // Quitter le jeu : ferme l'onglet/la PWA si possible, sinon page vide.
+  document.getElementById('btn-quit').addEventListener('click', () => {
+    if (!confirm('Quitter le jeu ?')) return;
+    window.close();
+    // Repli : window.close() est ignoré si l'onglet n'a pas été ouvert par script.
+    document.body.innerHTML =
+      '<div style="display:flex;height:100vh;align-items:center;justify-content:center;color:#fff;font-family:\'Press Start 2P\',monospace;font-size:12px;text-align:center;padding:20px;">Merci d\'avoir joué !<br><br>Vous pouvez fermer cette fenêtre.</div>';
+  });
 
   // Fond plein écran aléatoire (jour / coucher de soleil / nuit / hiver)
   const randBg = Math.floor(Math.random() * 4) + 1;

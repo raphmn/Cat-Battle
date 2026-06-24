@@ -8,7 +8,7 @@ import { BOT_LEVELS } from '../data/levels.js';
 import { getCats } from '../core/storage.js';
 import { startBattle } from './battle.js';
 
-let grid, picker, pickerList, pendingLevel;
+let grid, picker, pickerList, pendingLevel, pendingRandom;
 
 export function initLevelSelect() {
   const root = document.createElement('div');
@@ -63,18 +63,24 @@ function renderLevels() {
   });
 }
 
-function openPicker(level) {
+// Lance le mode "full aléatoire" (bouton du menu d'accueil).
+export function startRandomBattle() {
+  openPicker(0, true);
+}
+
+function openPicker(level, random = false) {
   const cats = getCats();
   if (cats.length === 0) {
-    alert("Adopte un chat d'abord ! (menu Liste Chats)");
+    navigate('catList');
     return;
   }
   if (cats.length === 1) {
-    startBattle(level, 0);
+    startBattle(level, 0, random);
     return;
   }
 
   pendingLevel = level;
+  pendingRandom = random;
   pickerList.innerHTML = '';
   cats.forEach((c, i) => {
     const btn = document.createElement('button');
@@ -82,7 +88,7 @@ function openPicker(level) {
     btn.innerHTML = `${c.asset || '🐱'} ${c.name} <span style="font-size:8px;">Niv.${c.lvl}</span>`;
     btn.addEventListener('click', () => {
       picker.close();
-      startBattle(pendingLevel, i);
+      startBattle(pendingLevel, i, pendingRandom);
     });
     pickerList.appendChild(btn);
   });

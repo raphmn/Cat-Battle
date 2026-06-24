@@ -75,7 +75,7 @@ export class Battle {
 
     if (action.type === 'shield') {
       actor.shielded = true;
-      events.push({ type: 'message', text: `${actor.name} se met à l'ABRI !` });
+      events.push({ type: 'shield', actorSide, text: `${actor.name} se met à l'ABRI !` });
     } else {
       const res = this.computeDamage(actor, target, action);
       events.push({ type: 'attack', actorSide, actionId, text: `${actor.name} utilise ${action.label} !` });

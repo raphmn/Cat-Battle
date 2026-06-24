@@ -77,7 +77,7 @@
 .battle-field {
   position: relative;
   width: 100%;
-  height: 58%;
+  height: 48%;
   overflow: hidden;
   background: linear-gradient(180deg, #9be0f0 0%, #bdeaa0 55%, #8fd070 100%);
 }
@@ -128,6 +128,107 @@
   100% { opacity: 0; transform: translateY(-40px) scale(1); }
 }
 
+/* === Effet central : griffe (attaque) / bouclier (abri) === */
+.center-fx {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 8;
+  pointer-events: none;
+}
+
+/* Bouclier : gros emoji qui surgit puis disparaît */
+.fx-shield {
+  font-size: 110px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
+  animation: fxShieldPop 0.7s ease-out forwards;
+}
+@keyframes fxShieldPop {
+  0% { opacity: 0; transform: scale(0.3) rotate(-12deg); }
+  35% { opacity: 1; transform: scale(1.15) rotate(4deg); }
+  70% { opacity: 1; transform: scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: scale(1.05); }
+}
+
+/* Griffe : lacérations effilées (SVG) qui balaient l'écran, rapide */
+.claw-svg {
+  width: 180px;
+  height: 180px;
+  filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.85));
+  animation: fxClawZip 0.4s ease-out forwards;
+}
+.claw-g path {
+  fill: url(#clawgrad);
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  transform: scaleY(0);
+  animation: fxClawDraw 0.16s ease-out forwards;
+}
+.claw-g path:nth-child(1) { animation-delay: 0s; }
+.claw-g path:nth-child(2) { animation-delay: 0.03s; }
+.claw-g path:nth-child(3) { animation-delay: 0.06s; }
+.claw-g path:nth-child(4) { animation-delay: 0.09s; }
+@keyframes fxClawDraw {
+  0% { transform: scaleY(0); }
+  100% { transform: scaleY(1); }
+}
+@keyframes fxClawZip {
+  0% { opacity: 0; transform: scale(0.6) translate(18px, -18px); }
+  30% { opacity: 1; transform: scale(1.08) translate(0, 0); }
+  70% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.02); }
+}
+
+/* === Coup spécial : ondes de choc + éclat + étincelles === */
+.fx-special { position: relative; width: 0; height: 0; }
+.fx-special > span { position: absolute; left: 0; top: 0; }
+
+.fx-ring {
+  width: 40px;
+  height: 40px;
+  margin: -20px;
+  border: 6px solid #ffd24a;
+  border-radius: 50%;
+  animation: fxRing 0.55s ease-out forwards;
+}
+.fx-ring2 { border-color: #ff5050; animation-delay: 0.1s; }
+@keyframes fxRing {
+  0% { transform: scale(0.2); opacity: 1; }
+  100% { transform: scale(3.4); opacity: 0; }
+}
+
+.fx-burst {
+  font-size: 92px;
+  line-height: 1;
+  transform: translate(-50%, -50%);
+  filter: drop-shadow(0 0 8px rgba(255, 170, 0, 0.9));
+  animation: fxBurst 0.6s ease-out forwards;
+}
+@keyframes fxBurst {
+  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-20deg); }
+  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(6deg); }
+  70% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+}
+
+.fx-spark {
+  font-size: 30px;
+  color: #ffe45a;
+  text-shadow: 0 0 6px #ffae00;
+  animation: fxSpark 0.55s ease-out forwards;
+}
+.fx-spark1 { --sx: 95px; --sy: -72px; }
+.fx-spark2 { --sx: -95px; --sy: -72px; }
+.fx-spark3 { --sx: 95px; --sy: 72px; }
+.fx-spark4 { --sx: -95px; --sy: 72px; }
+@keyframes fxSpark {
+  0% { opacity: 0; transform: translate(-50%, -50%) translate(0, 0) scale(0.4); }
+  35% { opacity: 1; }
+  100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(1.1); }
+}
+
 .hud {
   position: absolute;
   background: #f8f8f8;
@@ -176,7 +277,7 @@
 
 .battle-ui {
   width: 100%; /* sinon align-items:center du .scene rétrécit selon le texte */
-  height: 42%;
+  height: 52%;
   display: flex;
   flex-direction: column;
   background: #000;
@@ -186,7 +287,7 @@
 }
 
 .battle-message {
-  flex: 1;
+  flex: 0 0 24%; /* partie messages réduite */
   min-height: 0; /* empêche le texte long de pousser les boutons */
   overflow-y: auto;
   background: #fff;
@@ -204,7 +305,8 @@
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 10px;
-  height: 46%;
+  flex: 1; /* remplit l'espace restant : blocs d'attaque plus gros */
+  min-height: 0;
 }
 
 .bttn-action {
@@ -228,12 +330,12 @@
 }
 .bttn-action .action-label {
   display: block;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: 800;
 }
 .bttn-action .action-desc {
   display: block;
-  font-size: 7px;
+  font-size: 8px;
   line-height: 1.2;
   opacity: 0.9;
   text-transform: none;

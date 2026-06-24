@@ -40,6 +40,23 @@ export function getBotLevel(level) {
   return BOT_LEVELS.find((b) => b.level === level) || BOT_LEVELS[0];
 }
 
+// Mode "full aléatoire" : stats tirées au hasard sur toute la plage,
+// sans rapport avec les niveaux de campagne.
+const randInt = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
+
+export function generateRandomBot() {
+  return {
+    name: pickRand(NAMES),
+    asset: pickRand(ASSETS),
+    type: pickRand(TYPES),
+    lvl: randInt(1, TOTAL_LEVELS),
+    maxpv: randInt(40, 180),
+    atk: randInt(8, 40),
+    def: randInt(2, 25),
+    vit: randInt(5, 28),
+  };
+}
+
 // Génère un bot aléatoire pour un niveau donné.
 export function generateBot(level) {
   const cfg = getBotLevel(level);

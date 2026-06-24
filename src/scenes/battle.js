@@ -7,7 +7,7 @@
 import { register, navigate } from '../core/sceneManager.js';
 import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
-import { generateBot } from '../data/levels.js';
+import { generateBot, generateRandomBot } from '../data/levels.js';
 import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
 import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
@@ -88,16 +88,21 @@ export function initBattle() {
   els.resultBtn.addEventListener('click', () => {
     els.result.style.display = 'none';
     playTrack('menu');
-    navigate('levelSelect');
+    navigate(returnScene());
   });
 }
 
-export function startBattle(botLevel, catIndex) {
+// Scène de retour après le combat : home en mode aléatoire, sinon niveaux.
+function returnScene() {
+  return ctx && ctx.random ? 'home' : 'levelSelect';
+}
+
+export function startBattle(botLevel, catIndex, random = false) {
   const cat = getCats()[catIndex];
   if (!cat) return;
 
-  const bot = generateBot(botLevel);
-  ctx = { botLevel, catIndex };
+  const bot = random ? generateRandomBot() : generateBot(botLevel);
+  ctx = { botLevel, catIndex, random };
   // Bonus d'objet appliqué au combat (non permanent).
   // Backward compatible: support cat.items (nouveau) et cat.item (ancien)
   const itemIds = cat.items || (cat.item ? [cat.item] : []);
@@ -223,7 +228,7 @@ function handleFlee() {
   setMessage('Vous prenez la fuite !');
   setTimeout(() => {
     playTrack('menu');
-    navigate('levelSelect');
+    navigate(returnScene());
   }, 1100);
 }
 
@@ -232,7 +237,15 @@ async function playEvents(events) {
     if (ev.type === 'attack') {
       setMessage(ev.text);
       lunge(ev.actorSide);
-      if (ev.actionId === 'special') sfxSpecial();
+      showCenterFx('attack');
+      if (ev.actionId === 'special') {
+        showCenterFx('special');
+        sfxSpecial();
+      }
+      await wait(900);
+    } else if (ev.type === 'shield') {
+      setMessage(ev.text);
+      showCenterFx('shield');
       await wait(900);
     } else if (ev.type === 'faint') {
       setMessage(ev.text);
@@ -265,6 +278,55 @@ function showDamage(side, dmg) {
   pop.textContent = `-${dmg} PV`;
   field.appendChild(pop);
   setTimeout(() => pop.remove(), 900);
+}
+
+function shieldMarkup() {
+  return '<div class="fx-shield">🛡️</div>';
+}
+
+// Coup spécial : double onde de choc + éclat central.
+function specialMarkup() {
+  return `
+    <div class="fx-special">
+      <span class="fx-ring"></span>
+      <span class="fx-ring fx-ring2"></span>
+      <span class="fx-burst">💥</span>
+      <span class="fx-spark fx-spark1">✦</span>
+      <span class="fx-spark fx-spark2">✦</span>
+      <span class="fx-spark fx-spark3">✦</span>
+      <span class="fx-spark fx-spark4">✦</span>
+    </div>`;
+}
+
+// Vraies marques de griffe : 4 lacérations effilées en SVG.
+function clawMarkup() {
+  return `
+    <svg class="claw-svg" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="clawgrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0" stop-color="#ffffff"/>
+          <stop offset="55%" stop-color="#ffffff"/>
+          <stop offset="100%" stop-color="#ff4040"/>
+        </linearGradient>
+      </defs>
+      <g class="claw-g" transform="rotate(-22 100 100)">
+        <path d="M55,25 C62,71 62,133 55,180 C48,133 48,71 55,25 Z"/>
+        <path d="M90,15 C98,67 98,137 90,190 C82,137 82,67 90,15 Z"/>
+        <path d="M125,20 C133,69 133,135 125,185 C117,135 117,69 125,20 Z"/>
+        <path d="M160,30 C166,73 166,131 160,175 C154,131 154,73 160,30 Z"/>
+      </g>
+    </svg>`;
+}
+
+// Effet central animé : marques de griffe (attaque) ou bouclier (abri).
+function showCenterFx(kind) {
+  const field = root.querySelector('.battle-field');
+  const fx = document.createElement('div');
+  fx.className = `center-fx fx-${kind}`;
+  fx.innerHTML =
+    kind === 'shield' ? shieldMarkup() : kind === 'special' ? specialMarkup() : clawMarkup();
+  field.appendChild(fx);
+  setTimeout(() => fx.remove(), 700);
 }
 
 function shake(side) {
