@@ -1,55 +1,64 @@
+// ==========================================
+// Entités Chat — modèle de données du CdC (§5.2).
+// 4 statistiques : maxpv, atk, def, vit. Le critique est DÉRIVÉ de vit
+// (vit/350) et n'est donc pas stocké.
+// Valeurs réglées à la main par type (le budget auto de 100 pts est écarté).
+// ==========================================
+
 export class Cat {
-  constructor(name, sprite = "") {
-    this.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+  constructor(name, asset = "") {
+    this.id = Date.now().toString(36) + Math.random().toString(36).slice(2);
     this.name = name;
-    this.sprite = sprite;
-    this.type = "Base";
-    this.item = null;
-    
-    // Stats de base
-    this.pv = 100;
-    this.attack = 20;
-    this.defense = 10; // %
-    this.speed = 15; // %
-    this.crit = 15; // %
+    this.asset = asset; // référence du sprite (emoji placeholder pour l'instant)
+    this.type = "base"; // 'domestique' | 'base' | 'sauvage'
+    this.items = []; // Support de jusqu'à 2 objets
+    this.lvl = 1;
+    this.wins = 0;
+
+    // Statistiques (4)
+    this.maxpv = 100;
+    this.atk = 12;
+    this.def = 13;
+    this.vit = 10;
   }
 
   toJSON() {
     return {
       id: this.id,
       name: this.name,
-      sprite: this.sprite,
+      asset: this.asset,
       type: this.type,
-      item: this.item,
-      pv: this.pv,
-      attack: this.attack,
-      defense: this.defense,
-      speed: this.speed,
-      crit: this.crit
+      items: this.items,
+      lvl: this.lvl,
+      wins: this.wins,
+      maxpv: this.maxpv,
+      atk: this.atk,
+      def: this.def,
+      vit: this.vit,
     };
   }
 }
 
+// Domestique : « tank » — bonus PV/DEF, malus ATK/VIT
 export class DomesticCat extends Cat {
-  constructor(name, sprite = "") {
-    super(name, sprite);
-    this.type = "Domestique";
-    this.pv = 125;
-    this.attack = 12;
-    this.defense = 20;
-    this.speed = 8;
-    this.crit = 15;
+  constructor(name, asset = "") {
+    super(name, asset);
+    this.type = "domestique";
+    this.maxpv = 130;
+    this.atk = 8;
+    this.def = 20;
+    this.vit = 6;
   }
 }
 
+// Sauvage : « offensif » — bonus ATK/VIT, malus PV/DEF
 export class WildCat extends Cat {
-  constructor(name, sprite = "") {
-    super(name, sprite);
-    this.type = "Sauvage";
-    this.pv = 80;
-    this.attack = 35;
-    this.defense = 5;
-    this.speed = 25;
-    this.crit = 20;
+  constructor(name, asset = "") {
+    super(name, asset);
+    this.type = "sauvage";
+    this.maxpv = 70;
+    this.atk = 22;
+    this.def = 5;
+    this.vit = 16;
   }
 }

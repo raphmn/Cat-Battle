@@ -1,52 +1,48 @@
-const CACHE_NAME = 'catbattle-v1';
+const CACHE_NAME = 'catbattle-v5';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
+  '/favicon.svg',
   '/audio/ost1.mp3',
   '/audio/menu_click.mp3',
-  '/favicon.svg',
-  '/src/main.js',
-  '/src/style.css'
 ];
 
-// Installation du Service Worker et mise en cache des assets
+// Installation : pré-cache la coquille de base (pour le hors-ligne).
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('Opened cache');
-      return cache.addAll(ASSETS_TO_CACHE);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(ASSETS_TO_CACHE)).catch(() => {})
   );
   self.skipWaiting();
 });
 
-// Activation et nettoyage des anciens caches
+// Activation : supprime les anciens caches et prend le contrôle immédiatement.
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cache) => {
-          if (cache !== CACHE_NAME) {
-            console.log('Deleting old cache:', cache);
-            return caches.delete(cache);
-          }
-        })
-      );
-    })
+    caches.keys().then((names) =>
+      Promise.all(names.map((n) => (n !== CACHE_NAME ? caches.delete(n) : null)))
+    )
   );
   self.clients.claim();
 });
 
-// Interception des requêtes réseau (Cache First strategy)
+// Network-first : on tente TOUJOURS le réseau (code à jour), le cache ne sert
+// que de repli hors-ligne. Évite de resservir un ancien build.
 self.addEventListener('fetch', (event) => {
+  if (event.request.method !== 'GET') return;
   event.respondWith(
-    caches.match(event.request).then((response) => {
-      // Retourne la réponse en cache si elle existe, sinon fait la requête réseau
-      return response || fetch(event.request).catch(() => {
-        // Fallback optionnel si hors-ligne
-        console.warn('Network fetch failed and asset not in cache:', event.request.url);
-      });
-    })
+    fetch(event.request)
+      .then((response) => {
+        try {
+          if (response && response.ok && new URL(event.request.url).origin === self.location.origin) {
+            const copy = response.clone();
+            caches.open(CACHE_NAME).then((cache) => cache.put(event.request, copy)).catch(() => {});
+          }
+        } catch (e) {
+          /* ignore */
+        }
+        return response;
+      })
+      .catch(() => caches.match(event.request))
   );
 });
