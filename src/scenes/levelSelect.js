@@ -7,6 +7,7 @@ import { register, navigate } from '../core/sceneManager.js';
 import { BOT_LEVELS } from '../data/levels.js';
 import { getCats } from '../core/storage.js';
 import { startBattle } from './battle.js';
+import { assetMarkup } from '../core/asset.js';
 
 let grid, picker, pickerList, pendingLevel, pendingRandom;
 
@@ -85,7 +86,7 @@ function openPicker(level, random = false) {
   cats.forEach((c, i) => {
     const btn = document.createElement('button');
     btn.className = 'picker-cat retro-button';
-    btn.innerHTML = `${c.asset || '🐱'} ${c.name} <span style="font-size:8px;">Niv.${c.lvl}</span>`;
+    btn.innerHTML = `${assetMarkup(c.asset || '🐱', 20)} ${c.name} <span style="font-size:8px;">Niv.${c.lvl}</span>`;
     btn.addEventListener('click', () => {
       picker.close();
       startBattle(pendingLevel, i, pendingRandom);

@@ -109,6 +109,12 @@
 }
 .sprite-enemy { top: 15%; right: 14%; }
 .sprite-player { bottom: 9%; left: 14%; transform: scaleX(-1); }
+.sprite .sprite-img {
+  display: block;
+  width: 96px;
+  height: 96px;
+  object-fit: contain;
+}
 
 .dmg-float {
   position: absolute;

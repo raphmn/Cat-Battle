@@ -7,6 +7,7 @@ import { navigate } from '../core/sceneManager.js';
 import { getCats, addCat, deleteCat } from '../core/storage.js';
 import { Cat, DomesticCat, WildCat } from '../entities/Cat.js';
 import { ITEMS } from '../data/items.js';
+import { assetMarkup, photoToSprite } from '../core/asset.js';
 
 // slider 0/1/2 -> type stocké + libellé affiché
 const TYPE_MAPPING = {
@@ -50,8 +51,44 @@ export function initCatList() {
   const itemsDropZone = document.getElementById('adopt-items-drop');
   const equippedItemsContainer = document.getElementById('adopt-equipped-items');
   const confirmDeleteDialog = document.getElementById('confirm-delete-dialog');
+  const photoInput = document.getElementById('adopt-photo');
+  const photoStatus = document.getElementById('adopt-photo-status');
+  const photoPreview = document.getElementById('adopt-photo-preview');
+  const photoImg = document.getElementById('adopt-photo-img');
+  const photoClear = document.getElementById('adopt-photo-clear');
 
   let adoptEquippedItems = [];
+  let adoptPhotoAsset = null; // sprite détouré (data URL) ou null
+
+  const resetPhoto = () => {
+    adoptPhotoAsset = null;
+    if (photoInput) photoInput.value = '';
+    if (photoPreview) photoPreview.style.display = 'none';
+    if (photoStatus) photoStatus.style.display = 'none';
+  };
+
+  if (photoInput) {
+    photoInput.addEventListener('change', async (e) => {
+      const file = e.target.files && e.target.files[0];
+      if (!file) return;
+      photoStatus.style.display = 'block';
+      photoStatus.style.color = '#666';
+      photoStatus.textContent = 'Détourage en cours… (peut être long au 1er usage)';
+      photoPreview.style.display = 'none';
+      try {
+        adoptPhotoAsset = await photoToSprite(file);
+        photoImg.src = adoptPhotoAsset;
+        photoPreview.style.display = 'block';
+        photoStatus.style.display = 'none';
+      } catch (err) {
+        console.error(err);
+        adoptPhotoAsset = null;
+        photoStatus.style.color = '#c33';
+        photoStatus.textContent = 'Échec du détourage. Réessaie avec une autre photo.';
+      }
+    });
+  }
+  if (photoClear) photoClear.addEventListener('click', resetPhoto);
 
   // Sprites (emoji) disponibles à l'adoption
   ASSET_OPTIONS.forEach((s) => {
@@ -167,6 +204,7 @@ export function initCatList() {
     renderEquippedItems();
     itemsDropZone.style.background = '#f6f0df';
     formAdopt.reset();
+    resetPhoto();
     updateAdoptTypeInfo(1);
   });
 
@@ -178,6 +216,7 @@ export function initCatList() {
     navigate('catList');
     formAdopt.reset();
     adoptEquippedItems = [];
+    resetPhoto();
     updateCatListState();
   });
 
@@ -185,7 +224,7 @@ export function initCatList() {
     e.preventDefault();
     const name = document.getElementById('adopt-name').value;
     const type = TYPE_MAPPING[sliderType.value].type;
-    const asset = assetSelect.value;
+    const asset = adoptPhotoAsset || assetSelect.value; // photo détourée prioritaire
 
     let newCat;
     if (type === 'domestique') newCat = new DomesticCat(name, asset);
@@ -196,6 +235,7 @@ export function initCatList() {
     addCat(newCat.toJSON());
     formAdopt.reset();
     adoptEquippedItems = [];
+    resetPhoto();
     updateCatListState();
     navigate('catList');
   });
@@ -251,7 +291,7 @@ function renderCatList() {
     const progress = (cat.wins || 0) % 3; // victoires depuis le dernier niveau
     const typeInfo = TYPE_MAPPING[cat.type] || TYPE_MAPPING.base;
     info.innerHTML = `
-      <div class="cat-card-name">${cat.asset || ''} ${cat.name}</div>
+      <div class="cat-card-name">${assetMarkup(cat.asset, 28)} ${cat.name}</div>
       <div style="font-size:10px; color:#555; margin-bottom:4px;">${typeInfo.label} · Niv.${cat.lvl}</div>
       <div class="cat-type-description">${typeInfo.label} : ${typeInfo.description}</div>
       <div style="font-size:10px; color:#777; margin-top:6px;">${cat.wins} victoire(s) · niv. suivant ${progress}/3</div>

@@ -12,6 +12,7 @@ import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
 import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
 import { mountWebGLBackground } from '../core/webglBackground.js';
+import { setAssetEl } from '../core/asset.js';
 
 const STAT_LABELS = { maxpv: 'PV', atk: 'ATK', def: 'DEF', vit: 'VIT' };
 const SKILLS = ['atk', 'def', 'vit']; // compétences gagnées après victoire
@@ -117,10 +118,10 @@ export function startBattle(botLevel, catIndex, random = false) {
 
   els.enemyName.textContent = battle.enemy.name;
   els.enemyLevel.textContent = 'Niv.' + battle.enemy.lvl;
-  els.enemySprite.textContent = battle.enemy.asset;
+  setAssetEl(els.enemySprite, battle.enemy.asset);
   els.playerName.textContent = battle.player.name;
   els.playerLevel.textContent = 'Niv.' + battle.player.lvl;
-  els.playerSprite.textContent = battle.player.asset;
+  setAssetEl(els.playerSprite, battle.player.asset);
   setLvlProgress(cat.wins || 0);
   els.result.style.display = 'none';
 

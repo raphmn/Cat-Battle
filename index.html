@@ -97,9 +97,17 @@
           </div>
 
           <label for="adopt-sprite">Sprite :</label>
-          <select id="adopt-sprite" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+          <select id="adopt-sprite" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 10px;">
             <option value="">Aucun</option>
           </select>
+
+          <label for="adopt-photo">…ou une photo (le sujet est détouré) :</label>
+          <input type="file" id="adopt-photo" accept="image/*" capture="environment" class="retro-input" style="width: 100%; box-sizing: border-box; margin-bottom: 8px; font-size: 10px;">
+          <div id="adopt-photo-status" style="font-size: 9px; color: #666; margin-bottom: 8px; display: none;"></div>
+          <div id="adopt-photo-preview" style="display: none; text-align: center; margin-bottom: 15px;">
+            <img id="adopt-photo-img" alt="sprite" style="width: 80px; height: 80px; object-fit: contain; background: repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 50% / 16px 16px; border: 2px solid #333; border-radius: 8px;">
+            <div><button type="button" id="adopt-photo-clear" class="retro-button" style="font-size: 9px; padding: 6px 10px; margin-top: 6px; background-color: #ff8888;">Retirer la photo</button></div>
+          </div>
 
           <label>Objets :</label>
           <div id="adopt-items-list" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
