@@ -146,9 +146,11 @@ function renderCatList() {
     const info = document.createElement('div');
     info.className = 'cat-card-info';
     const itemTxt = itemLabel(cat.item);
+    const progress = cat.wins % 3; // victoires depuis le dernier niveau
     info.innerHTML = `
       <div class="cat-card-name">${cat.asset || ''} ${cat.name}</div>
-      <div style="font-size:8px; color:#555;">${capitalize(cat.type)} · Niv.${cat.lvl} · ${cat.wins} victoire(s)</div>
+      <div style="font-size:8px; color:#555;">${capitalize(cat.type)} · Niv.${cat.lvl}</div>
+      <div style="font-size:8px; color:#777;">${cat.wins} victoire(s) · niv. suivant ${progress}/3</div>
       ${itemTxt ? `<div class="cat-card-item">${itemTxt}</div>` : ''}
     `;
 
