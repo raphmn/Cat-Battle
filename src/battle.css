@@ -110,6 +110,24 @@
 .sprite-enemy { top: 15%; right: 14%; }
 .sprite-player { bottom: 9%; left: 14%; transform: scaleX(-1); }
 
+.dmg-float {
+  position: absolute;
+  z-index: 5;
+  font-weight: 800;
+  font-size: 22px;
+  color: #f04040;
+  text-shadow: 0 2px 0 #fff, 0 0 4px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  animation: dmgFloat 0.9s ease-out forwards;
+}
+.dmg-enemy { top: 12%; right: 16%; }
+.dmg-player { bottom: 22%; left: 16%; }
+@keyframes dmgFloat {
+  0% { opacity: 0; transform: translateY(8px) scale(0.7); }
+  20% { opacity: 1; transform: translateY(0) scale(1.1); }
+  100% { opacity: 0; transform: translateY(-40px) scale(1); }
+}
+
 .hud {
   position: absolute;
   background: #f8f8f8;
@@ -329,9 +347,53 @@
 
 /* === OBJET SUR LA CARTE === */
 .cat-card-item {
-  font-size: 8px;
-  color: #2a8a4a;
-  margin-top: 5px;
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: 44px minmax(0, 1fr);
+  gap: 10px;
+  font-size: 11px;
+  color: #2a2a2a;
+  margin-top: 8px;
+  background: #f9f6ee;
+  border: 1px solid #d4cdbf;
+  border-radius: 12px;
+  padding: 10px;
+  width: 100%;
+}
+
+.cat-card-item img {
+  width: 44px;
+  height: 44px;
+  object-fit: contain;
+  border-radius: 10px;
+  background: #fff;
+}
+
+.cat-card-item-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.cat-card-item-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #2f2f2f;
+  margin-bottom: 1px;
+}
+
+.cat-card-item-description {
+  font-size: 10px;
+  color: #504a3f;
+  line-height: 1.4;
+}
+
+.cat-card-item-effects {
+  font-size: 11px;
+  color: #3b3b3b;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace;
+  white-space: pre-wrap;
+  line-height: 1.4;
 }
 
 /* === ANIMATIONS DE COMBAT === */

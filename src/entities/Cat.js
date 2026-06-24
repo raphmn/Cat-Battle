@@ -11,15 +11,15 @@ export class Cat {
     this.name = name;
     this.asset = asset; // référence du sprite (emoji placeholder pour l'instant)
     this.type = "base"; // 'domestique' | 'base' | 'sauvage'
-    this.item = null;
+    this.items = []; // Support de jusqu'à 2 objets
     this.lvl = 1;
     this.wins = 0;
 
     // Statistiques (4)
     this.maxpv = 100;
-    this.atk = 20;
-    this.def = 10;
-    this.vit = 15;
+    this.atk = 12;
+    this.def = 13;
+    this.vit = 10;
   }
 
   toJSON() {
@@ -28,7 +28,7 @@ export class Cat {
       name: this.name,
       asset: this.asset,
       type: this.type,
-      item: this.item,
+      items: this.items,
       lvl: this.lvl,
       wins: this.wins,
       maxpv: this.maxpv,
@@ -45,9 +45,9 @@ export class DomesticCat extends Cat {
     super(name, asset);
     this.type = "domestique";
     this.maxpv = 130;
-    this.atk = 12;
+    this.atk = 8;
     this.def = 20;
-    this.vit = 8;
+    this.vit = 6;
   }
 }
 
@@ -56,9 +56,9 @@ export class WildCat extends Cat {
   constructor(name, asset = "") {
     super(name, asset);
     this.type = "sauvage";
-    this.maxpv = 80;
-    this.atk = 35;
+    this.maxpv = 70;
+    this.atk = 22;
     this.def = 5;
-    this.vit = 25;
+    this.vit = 16;
   }
 }

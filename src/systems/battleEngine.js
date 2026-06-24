@@ -132,6 +132,10 @@ export class Battle {
     const enemyActionId = this.chooseEnemyAction();
     const acts = { player: playerActionId, enemy: enemyActionId };
 
+    // ABRI bloque uniquement pendant le tour en cours.
+    this.player.shielded = false;
+    this.enemy.shielded = false;
+
     for (const side of this.resolveOrder(playerActionId, enemyActionId)) {
       if (this[side].hp <= 0) continue;
       events.push(...this.performAction(side, acts[side]));

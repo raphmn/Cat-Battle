@@ -99,9 +99,11 @@ export function startBattle(botLevel, catIndex) {
   const bot = generateBot(botLevel);
   ctx = { botLevel, catIndex };
   // Bonus d'objet appliqué au combat (non permanent).
+  // Backward compatible: support cat.items (nouveau) et cat.item (ancien)
+  const itemIds = cat.items || (cat.item ? [cat.item] : []);
   const boosted = {
     ...cat,
-    ...applyItemBonus({ maxpv: cat.maxpv, atk: cat.atk, def: cat.def, vit: cat.vit }, cat.item),
+    ...applyItemBonus({ maxpv: cat.maxpv, atk: cat.atk, def: cat.def, vit: cat.vit }, itemIds),
   };
   battle = new Battle(boosted, bot);
   busy = false;
@@ -207,6 +209,7 @@ async function playEvents(events) {
       await wait(900);
     } else if (ev.type === 'damage') {
       shake(ev.targetSide);
+      showDamage(ev.targetSide, ev.dmg);
       sfxHit();
       updateHud();
       await wait(550);
@@ -218,6 +221,15 @@ function afterRound() {
   busy = false;
   if (battle.over) return endBattle();
   promptPlayer();
+}
+
+function showDamage(side, dmg) {
+  const field = root.querySelector('.battle-field');
+  const pop = document.createElement('div');
+  pop.className = `dmg-float dmg-${side}`;
+  pop.textContent = `-${dmg} PV`;
+  field.appendChild(pop);
+  setTimeout(() => pop.remove(), 900);
 }
 
 function shake(side) {
@@ -259,10 +271,18 @@ function applyVictory() {
   const gained = [];
 
   if (cat) {
-    const stat = SKILLS[Math.floor(Math.random() * SKILLS.length)];
-    cat[stat] = (cat[stat] || 0) + 1;
+    // Plus le niveau du bot est élevé, plus on gagne de compétences (US08).
+    const points = Math.ceil(ctx.botLevel / 3); // 1 Facile, 2 Moyen, 3 Difficile
+    const inc = {};
+    for (let i = 0; i < points; i++) {
+      const stat = SKILLS[Math.floor(Math.random() * SKILLS.length)];
+      cat[stat] = (cat[stat] || 0) + 1;
+      inc[stat] = (inc[stat] || 0) + 1;
+    }
     cat.wins = (cat.wins || 0) + 1;
-    gained.push(`${STAT_LABELS[stat]} +1`);
+    for (const stat of SKILLS) {
+      if (inc[stat]) gained.push(`${STAT_LABELS[stat]} +${inc[stat]}`);
+    }
 
     let leveled = false;
     if (cat.wins % 3 === 0) {

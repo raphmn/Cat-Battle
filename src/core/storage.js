@@ -29,6 +29,13 @@ function normalizeCat(c) {
     name: c.name || 'Chat',
     asset: c.asset ?? c.sprite ?? '',
     type: (c.type || 'base').toLowerCase(),
+    items: c.items
+      ? Array.isArray(c.items)
+        ? c.items
+        : [c.items]
+      : c.item
+      ? [c.item]
+      : [],
     item: c.item ?? null,
     lvl: c.lvl ?? c.level ?? 1,
     wins: c.wins ?? 0,
