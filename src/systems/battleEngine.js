@@ -86,15 +86,16 @@ export class Battle {
       } else {
         target.hp = Math.max(0, target.hp - res.dmg);
         if (res.crit) events.push({ type: 'message', text: 'Coup critique !' });
-        events.push({ type: 'damage', targetSide, dmg: res.dmg });
+        events.push({ type: 'damage', targetSide, dmg: res.dmg, hp: target.hp, maxpv: target.maxpv });
         if (target.hp <= 0) {
           events.push({ type: 'faint', side: targetSide, text: `${target.name} est K.O. !` });
         }
       }
     }
 
-    // Verrou "pas 2 tours de suite" : indisponible au tour suivant.
-    if (action.noConsecutive) actor.cooldowns[actionId] = 2;
+    // Recharge : cooldown explicite, sinon "pas 2 tours de suite".
+    if (action.cooldown) actor.cooldowns[actionId] = action.cooldown;
+    else if (action.noConsecutive) actor.cooldowns[actionId] = 2;
     return events;
   }
 

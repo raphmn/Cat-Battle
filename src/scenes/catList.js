@@ -248,7 +248,7 @@ function renderCatList() {
 
     const info = document.createElement('div');
     info.className = 'cat-card-info';
-    const progress = cat.wins % 3; // victoires depuis le dernier niveau
+    const progress = (cat.wins || 0) % 3; // victoires depuis le dernier niveau
     const typeInfo = TYPE_MAPPING[cat.type] || TYPE_MAPPING.base;
     info.innerHTML = `
       <div class="cat-card-name">${cat.asset || ''} ${cat.name}</div>

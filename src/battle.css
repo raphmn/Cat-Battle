@@ -275,6 +275,28 @@
 }
 .hp-num { font-size: 9px; text-align: right; margin-top: 4px; }
 
+.hud-xpwrap {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 5px;
+}
+.xp-tag { font-size: 8px; color: #3a8acc; font-weight: bold; }
+.xp-bar {
+  flex: 1;
+  height: 6px;
+  background: #444;
+  border: 2px solid #000;
+  border-radius: 6px;
+  overflow: hidden;
+}
+.xp-fill {
+  height: 100%;
+  width: 0;
+  background: #4ab8ff;
+  transition: width 0.5s;
+}
+
 .battle-ui {
   width: 100%; /* sinon align-items:center du .scene rétrécit selon le texte */
   height: 52%;

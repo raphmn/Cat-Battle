@@ -20,9 +20,9 @@ export const ACTIONS = {
     type: 'damage',
     mult: 1.55,
     missChance: 0.22,
-    noConsecutive: true, // pas 2 tours de suite
+    cooldown: 3, // utilisable tous les 3 tours (2 tours de recharge)
     selfCost: 5,
-    description: 'Dégâts plus puissants (×1.55) avec ~22% de chance de rater. Coûte 5 PV.',
+    description: 'Dégâts plus puissants (×1.55) avec ~22% de chance de rater. Coûte 5 PV. Rechargé en 2 tours.',
   },
   abri: {
     id: 'abri',

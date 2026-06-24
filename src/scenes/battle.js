@@ -42,6 +42,7 @@ export function initBattle() {
         <div class="hud-name"><span class="bname"></span><span class="blevel"></span></div>
         <div class="hud-hpwrap"><span class="hp-tag">PV</span><div class="hp-bar"><div class="hp-fill"></div></div></div>
         <div class="hp-num"></div>
+        <div class="hud-xpwrap"><span class="xp-tag">NIV</span><div class="xp-bar"><div class="xp-fill"></div></div></div>
       </div>
     </div>
     <div class="battle-ui">
@@ -74,6 +75,7 @@ export function initBattle() {
     playerLevel: root.querySelector('.hud-player .blevel'),
     playerHp: root.querySelector('.hud-player .hp-fill'),
     playerHpNum: root.querySelector('.hud-player .hp-num'),
+    playerXp: root.querySelector('.hud-player .xp-fill'),
     playerSprite: root.querySelector('.sprite-player'),
     msg: root.querySelector('.msg-text'),
     actions: root.querySelector('.battle-actions'),
@@ -119,6 +121,7 @@ export function startBattle(botLevel, catIndex, random = false) {
   els.playerName.textContent = battle.player.name;
   els.playerLevel.textContent = 'Niv.' + battle.player.lvl;
   els.playerSprite.textContent = battle.player.asset;
+  setLvlProgress(cat.wins || 0);
   els.result.style.display = 'none';
 
   // Réinitialise les classes d'animation + entrée du bot.
@@ -147,6 +150,12 @@ function updateHud() {
   setBar(els.enemyHp, battle.enemy.hp, battle.enemy.maxpv);
   setBar(els.playerHp, battle.player.hp, battle.player.maxpv);
   els.playerHpNum.textContent = `${battle.player.hp}/${battle.player.maxpv}`;
+}
+
+// Progression vers le niveau suivant : 3 victoires = 1 niveau.
+function setLvlProgress(wins) {
+  const step = (wins || 0) % 3;
+  els.playerXp.style.width = (step / 3) * 100 + '%';
 }
 
 function setActionsEnabled(on) {
@@ -259,7 +268,10 @@ async function playEvents(events) {
       shake(ev.targetSide);
       showDamage(ev.targetSide, ev.dmg);
       sfxHit();
-      updateHud();
+      // On ne baisse que la barre de la cible (sinon les 2 chutent ensemble).
+      const bar = ev.targetSide === 'player' ? els.playerHp : els.enemyHp;
+      setBar(bar, ev.hp, ev.maxpv);
+      if (ev.targetSide === 'player') els.playerHpNum.textContent = `${ev.hp}/${ev.maxpv}`;
       await wait(550);
     }
   }
@@ -368,8 +380,10 @@ function applyVictory() {
   const gained = [];
 
   if (cat) {
-    // Plus le niveau du bot est élevé, plus on gagne de compétences (US08).
-    const points = Math.ceil(ctx.botLevel / 3); // 1 Facile, 2 Moyen, 3 Difficile
+    const enemyLvl = battle.enemy.lvl;
+
+    // Plus le niveau de l'adversaire est élevé, plus on gagne de compétences (US08).
+    const points = Math.max(1, Math.ceil(enemyLvl / 3));
     const inc = {};
     for (let i = 0; i < points; i++) {
       const stat = SKILLS[Math.floor(Math.random() * SKILLS.length)];
@@ -381,14 +395,18 @@ function applyVictory() {
       if (inc[stat]) gained.push(`${STAT_LABELS[stat]} +${inc[stat]}`);
     }
 
+    // Montée de niveau toutes les 3 victoires.
+    cat.lvl = cat.lvl || 1;
     let leveled = false;
     if (cat.wins % 3 === 0) {
-      cat.lvl = (cat.lvl || 1) + 1;
+      cat.lvl += 1;
       cat.maxpv += 10;
       leveled = true;
       gained.push('PV max +10');
     }
+
     saveCats(cats);
+    setLvlProgress(cat.wins, cat.lvl);
 
     const lvlMsg = leveled ? ` — passe Niv.${cat.lvl} !` : '';
     showResult('Victoire !', `${cat.name} : ${gained.join('   ')}${lvlMsg}`, true);
