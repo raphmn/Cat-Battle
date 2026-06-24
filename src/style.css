@@ -198,20 +198,17 @@ html, body {
   box-shadow: 2px 2px 0 #000;
 }
 
-/* Lower Background */
+/* Fond plein écran du menu */
 #home-bg-lower {
   position: absolute;
-  bottom: 0;
+  top: 0;
   left: 0;
   width: 100%;
-  height: 50%; /* Occupe la moitié inférieure de l'écran */
-  background-size: contain; /* Dezoom le background */
-  background-position: center bottom;
+  height: 100%; /* Remplit tout l'écran du menu */
+  background-size: cover; /* Couvre tout, centré sur le panneau */
+  background-position: center center;
   background-repeat: no-repeat;
-  z-index: 1; /* Derrière les boutons */
-  opacity: 0.8;
-  mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
-  -webkit-mask-image: linear-gradient(to top, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 100%);
+  z-index: 0; /* Derrière logo + boutons */
 }
 
 /* Logo Area */

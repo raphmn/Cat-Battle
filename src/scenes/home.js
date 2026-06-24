@@ -33,8 +33,8 @@ export function initHome() {
   // Statistiques : historique des combats
   document.getElementById('btn-stats').addEventListener('click', () => navigate('stats'));
 
-  // Fond aléatoire pour la moitié basse de l'écran d'accueil
+  // Fond plein écran aléatoire (jour / coucher de soleil / nuit / hiver)
   const randBg = Math.floor(Math.random() * 4) + 1;
   const lower = document.getElementById('home-bg-lower');
-  if (lower) lower.style.backgroundImage = `url('/sprites/bg/bg${randBg}.png')`;
+  if (lower) lower.style.backgroundImage = `url('/sprites/bg/bg${randBg}.jpg')`;
 }
