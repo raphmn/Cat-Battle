@@ -97,9 +97,17 @@ export function initCatList() {
     photoInput.addEventListener('change', async (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
+      
+      const overlay = document.getElementById('detourage-overlay');
+      if (overlay) overlay.style.display = 'flex';
+      
       photoStatus.style.display = 'block';
       photoStatus.style.color = '#666';
-      photoStatus.textContent = 'Détourage en cours… (peut être long au 1er usage)';
+      photoStatus.textContent = 'Détourage en cours...';
+      
+      // Laisse le temps au navigateur d'afficher l'overlay avant le traitement lourd
+      await new Promise(r => setTimeout(r, 50));
+      
       try {
         photoAsset = await photoToSprite(file);
         selectedAsset = photoAsset;
@@ -109,6 +117,9 @@ export function initCatList() {
         console.error(err);
         photoStatus.style.color = '#c33';
         photoStatus.textContent = 'Échec du détourage. Réessaie avec une autre photo.';
+      } finally {
+        if (overlay) overlay.style.display = 'none';
+        photoInput.value = ''; // Permet de re-sélectionner le même fichier si besoin
       }
     });
   }
