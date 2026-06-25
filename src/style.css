@@ -266,6 +266,12 @@ html, body {
   justify-content: center;
   align-items: center;
   z-index: 5;
+  animation: floatLogo 4s ease-in-out infinite;
+}
+
+@keyframes floatLogo {
+  0%, 100% { transform: translate(-50%, -50%); }
+  50% { transform: translate(-50%, -53%); }
 }
 
 .logo-ellipse {
@@ -276,7 +282,45 @@ html, body {
   z-index: -1;
 }
 
+.logo-wrapper {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+}
+
+.logo-shine {
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  pointer-events: none;
+  z-index: 2;
+  overflow: hidden;
+  -webkit-mask-image: url('/sprites/logo_nobg.png');
+  -webkit-mask-size: 100% 100%;
+  -webkit-mask-repeat: no-repeat;
+  -webkit-mask-position: center;
+  mask-image: url('/sprites/logo_nobg.png');
+  mask-size: 100% 100%;
+  mask-repeat: no-repeat;
+  mask-position: center;
+}
+
+.logo-shine::after {
+  content: "";
+  position: absolute;
+  top: 0; left: -100%; width: 40%; height: 100%;
+  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+  transform: skewX(-25deg);
+  animation: logoShineAnim 6s infinite;
+}
+
+@keyframes logoShineAnim {
+  0% { left: -100%; }
+  25% { left: 200%; }
+  100% { left: 200%; }
+}
+
 #main-logo {
+  display: block;
   width: 100%;
   height: auto;
   z-index: 1;
