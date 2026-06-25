@@ -151,6 +151,9 @@ export function startBattle(botLevel, catIndex, random = false) {
   // Réinitialise les classes d'animation + entrée du bot.
   els.enemySprite.className = 'sprite sprite-enemy enter';
   els.playerSprite.className = 'sprite sprite-player';
+  setTimeout(() => {
+    if (els.enemySprite) els.enemySprite.classList.remove('enter');
+  }, 650);
 
   updateHud();
   setActionsEnabled(false);

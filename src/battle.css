@@ -32,9 +32,20 @@
   transition: transform 0.1s, box-shadow 0.1s;
 }
 
-.level-btn .lvl-num { font-size: 18px; color: #cc0000; }
-.level-btn .lvl-enemy { font-size: 9px; line-height: 1.4; }
-.level-btn .lvl-meta { font-size: 8px; color: #555; }
+.level-btn .lvl-num {
+  font-size: 18px;
+  color: #cc0000;
+}
+
+.level-btn .lvl-enemy {
+  font-size: 9px;
+  line-height: 1.4;
+}
+
+.level-btn .lvl-meta {
+  font-size: 8px;
+  color: #555;
+}
 
 .level-btn:active {
   transform: translate(2px, 2px);
@@ -44,7 +55,10 @@
 .level-btn.boss {
   box-shadow: inset 0 0 0 4px #ff4444, 4px 4px 0 rgba(0, 0, 0, 0.5);
 }
-.level-btn.boss .lvl-num { color: #000; }
+
+.level-btn.boss .lvl-num {
+  color: #000;
+}
 
 .level-btn.locked {
   filter: grayscale(1);
@@ -60,6 +74,7 @@
   gap: 10px;
   margin-bottom: 16px;
 }
+
 #cat-picker-dialog .picker-cat {
   font-size: 11px;
   padding: 12px;
@@ -80,32 +95,62 @@
   height: 48%;
   overflow: hidden;
   background: #6cba54 center / cover no-repeat;
-  image-rendering: pixelated; /* fonds pixel-art nets */
+  image-rendering: pixelated;
+  /* fonds pixel-art nets */
 }
 
 .platform {
   position: absolute;
-  width: 56%;
-  height: 34px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0) 100%);
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 1) 0%, rgba(255, 255, 255, 0.8) 60%, rgba(255, 255, 255, 0) 100%);
 }
-.platform-enemy { top: 41%; right: 5%; }
-.platform-player { bottom: 2%; left: 5%; }
+
+.platform-enemy {
+  width: 42%;
+  height: 30px;
+  top: 49%;
+  right: 7%;
+}
+
+.platform-player {
+  width: 55%;
+  height: 34px;
+  bottom: 8%;
+  left: 3%;
+}
 
 .sprite {
   position: absolute;
+
   font-size: 64px;
   line-height: 1;
   filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.25));
 }
-.sprite-enemy { top: 20%; right: 14%; }
-.sprite-player { bottom: 9%; left: 14%; transform: scaleX(-1); }
+
+.sprite-enemy {
+  top: 28%;
+  right: 14%;
+}
+
+.sprite-player {
+  bottom: 9%;
+  left: 14%;
+  transform: scaleX(-1);
+}
+
 .sprite .sprite-img {
   display: block;
-  width: 96px;
-  height: 96px;
   object-fit: contain;
+}
+
+.sprite-enemy .sprite-img {
+  width: 120px;
+  height: 120px;
+}
+
+.sprite-player .sprite-img {
+  width: 145px;
+  height: 145px;
 }
 
 .dmg-float {
@@ -118,12 +163,32 @@
   pointer-events: none;
   animation: dmgFloat 0.9s ease-out forwards;
 }
-.dmg-enemy { top: 12%; right: 16%; }
-.dmg-player { bottom: 22%; left: 16%; }
+
+.dmg-enemy {
+  top: 12%;
+  right: 16%;
+}
+
+.dmg-player {
+  bottom: 22%;
+  left: 16%;
+}
+
 @keyframes dmgFloat {
-  0% { opacity: 0; transform: translateY(8px) scale(0.7); }
-  20% { opacity: 1; transform: translateY(0) scale(1.1); }
-  100% { opacity: 0; transform: translateY(-40px) scale(1); }
+  0% {
+    opacity: 0;
+    transform: translateY(8px) scale(0.7);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translateY(0) scale(1.1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translateY(-40px) scale(1);
+  }
 }
 
 /* === Effet central : griffe (attaque) / bouclier (abri) === */
@@ -143,11 +208,27 @@
   filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.5));
   animation: fxShieldPop 0.7s ease-out forwards;
 }
+
 @keyframes fxShieldPop {
-  0% { opacity: 0; transform: scale(0.3) rotate(-12deg); }
-  35% { opacity: 1; transform: scale(1.15) rotate(4deg); }
-  70% { opacity: 1; transform: scale(1) rotate(0deg); }
-  100% { opacity: 0; transform: scale(1.05); }
+  0% {
+    opacity: 0;
+    transform: scale(0.3) rotate(-12deg);
+  }
+
+  35% {
+    opacity: 1;
+    transform: scale(1.15) rotate(4deg);
+  }
+
+  70% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.05);
+  }
 }
 
 /* Griffe : lacérations effilées (SVG) qui balaient l'écran, rapide */
@@ -157,6 +238,7 @@
   filter: drop-shadow(0 0 6px rgba(255, 50, 50, 0.85));
   animation: fxClawZip 0.4s ease-out forwards;
 }
+
 .claw-g path {
   fill: url(#clawgrad);
   transform-box: fill-box;
@@ -164,24 +246,67 @@
   transform: scaleY(0);
   animation: fxClawDraw 0.16s ease-out forwards;
 }
-.claw-g path:nth-child(1) { animation-delay: 0s; }
-.claw-g path:nth-child(2) { animation-delay: 0.03s; }
-.claw-g path:nth-child(3) { animation-delay: 0.06s; }
-.claw-g path:nth-child(4) { animation-delay: 0.09s; }
-@keyframes fxClawDraw {
-  0% { transform: scaleY(0); }
-  100% { transform: scaleY(1); }
+
+.claw-g path:nth-child(1) {
+  animation-delay: 0s;
 }
+
+.claw-g path:nth-child(2) {
+  animation-delay: 0.03s;
+}
+
+.claw-g path:nth-child(3) {
+  animation-delay: 0.06s;
+}
+
+.claw-g path:nth-child(4) {
+  animation-delay: 0.09s;
+}
+
+@keyframes fxClawDraw {
+  0% {
+    transform: scaleY(0);
+  }
+
+  100% {
+    transform: scaleY(1);
+  }
+}
+
 @keyframes fxClawZip {
-  0% { opacity: 0; transform: scale(0.6) translate(18px, -18px); }
-  30% { opacity: 1; transform: scale(1.08) translate(0, 0); }
-  70% { opacity: 1; transform: scale(1); }
-  100% { opacity: 0; transform: scale(1.02); }
+  0% {
+    opacity: 0;
+    transform: scale(0.6) translate(18px, -18px);
+  }
+
+  30% {
+    opacity: 1;
+    transform: scale(1.08) translate(0, 0);
+  }
+
+  70% {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.02);
+  }
 }
 
 /* === Coup spécial : ondes de choc + éclat + étincelles === */
-.fx-special { position: relative; width: 0; height: 0; }
-.fx-special > span { position: absolute; left: 0; top: 0; }
+.fx-special {
+  position: relative;
+  width: 0;
+  height: 0;
+}
+
+.fx-special>span {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
 
 .fx-ring {
   width: 40px;
@@ -191,10 +316,22 @@
   border-radius: 50%;
   animation: fxRing 0.55s ease-out forwards;
 }
-.fx-ring2 { border-color: #ff5050; animation-delay: 0.1s; }
+
+.fx-ring2 {
+  border-color: #ff5050;
+  animation-delay: 0.1s;
+}
+
 @keyframes fxRing {
-  0% { transform: scale(0.2); opacity: 1; }
-  100% { transform: scale(3.4); opacity: 0; }
+  0% {
+    transform: scale(0.2);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(3.4);
+    opacity: 0;
+  }
 }
 
 .fx-burst {
@@ -204,11 +341,27 @@
   filter: drop-shadow(0 0 8px rgba(255, 170, 0, 0.9));
   animation: fxBurst 0.6s ease-out forwards;
 }
+
 @keyframes fxBurst {
-  0% { opacity: 0; transform: translate(-50%, -50%) scale(0.3) rotate(-20deg); }
-  30% { opacity: 1; transform: translate(-50%, -50%) scale(1.2) rotate(6deg); }
-  70% { opacity: 1; transform: translate(-50%, -50%) scale(1) rotate(0deg); }
-  100% { opacity: 0; transform: translate(-50%, -50%) scale(1.1); }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.3) rotate(-20deg);
+  }
+
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2) rotate(6deg);
+  }
+
+  70% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1) rotate(0deg);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
 }
 
 .fx-spark {
@@ -217,14 +370,41 @@
   text-shadow: 0 0 6px #ffae00;
   animation: fxSpark 0.55s ease-out forwards;
 }
-.fx-spark1 { --sx: 95px; --sy: -72px; }
-.fx-spark2 { --sx: -95px; --sy: -72px; }
-.fx-spark3 { --sx: 95px; --sy: 72px; }
-.fx-spark4 { --sx: -95px; --sy: 72px; }
+
+.fx-spark1 {
+  --sx: 95px;
+  --sy: -72px;
+}
+
+.fx-spark2 {
+  --sx: -95px;
+  --sy: -72px;
+}
+
+.fx-spark3 {
+  --sx: 95px;
+  --sy: 72px;
+}
+
+.fx-spark4 {
+  --sx: -95px;
+  --sy: 72px;
+}
+
 @keyframes fxSpark {
-  0% { opacity: 0; transform: translate(-50%, -50%) translate(0, 0) scale(0.4); }
-  35% { opacity: 1; }
-  100% { opacity: 0; transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(1.1); }
+  0% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(0, 0) scale(0.4);
+  }
+
+  35% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -50%) translate(var(--sx), var(--sy)) scale(1.1);
+  }
 }
 
 .hud {
@@ -238,8 +418,16 @@
   box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.4);
   color: #222;
 }
-.hud-enemy { top: 6%; left: 5%; }
-.hud-player { bottom: 6%; right: 5%; }
+
+.hud-enemy {
+  top: 6%;
+  left: 5%;
+}
+
+.hud-player {
+  bottom: 6%;
+  right: 5%;
+}
 
 .hud-name {
   font-size: 10px;
@@ -249,14 +437,23 @@
   margin-bottom: 6px;
   white-space: nowrap;
 }
-.blevel { color: #444; }
+
+.blevel {
+  color: #444;
+}
 
 .hud-hpwrap {
   display: flex;
   align-items: center;
   gap: 6px;
 }
-.hp-tag { font-size: 8px; color: #d8a000; font-weight: bold; }
+
+.hp-tag {
+  font-size: 8px;
+  color: #d8a000;
+  font-weight: bold;
+}
+
 .hp-bar {
   flex: 1;
   height: 8px;
@@ -265,13 +462,19 @@
   border-radius: 6px;
   overflow: hidden;
 }
+
 .hp-fill {
   height: 100%;
   width: 100%;
   background: #70c860;
   transition: width 0.4s, background 0.4s;
 }
-.hp-num { font-size: 9px; text-align: right; margin-top: 4px; }
+
+.hp-num {
+  font-size: 9px;
+  text-align: right;
+  margin-top: 4px;
+}
 
 .hud-xpwrap {
   display: flex;
@@ -279,7 +482,13 @@
   gap: 6px;
   margin-top: 5px;
 }
-.xp-tag { font-size: 8px; color: #3a8acc; font-weight: bold; }
+
+.xp-tag {
+  font-size: 8px;
+  color: #3a8acc;
+  font-weight: bold;
+}
+
 .xp-bar {
   flex: 1;
   height: 6px;
@@ -288,6 +497,7 @@
   border-radius: 6px;
   overflow: hidden;
 }
+
 .xp-fill {
   height: 100%;
   width: 0;
@@ -296,7 +506,8 @@
 }
 
 .battle-ui {
-  width: 100%; /* sinon align-items:center du .scene rétrécit selon le texte */
+  width: 100%;
+  /* sinon align-items:center du .scene rétrécit selon le texte */
   height: 52%;
   display: flex;
   flex-direction: column;
@@ -307,8 +518,10 @@
 }
 
 .battle-message {
-  flex: 0 0 24%; /* partie messages réduite */
-  min-height: 0; /* empêche le texte long de pousser les boutons */
+  flex: 0 0 24%;
+  /* partie messages réduite */
+  min-height: 0;
+  /* empêche le texte long de pousser les boutons */
   overflow-y: auto;
   background: #fff;
   display: flex;
@@ -318,14 +531,18 @@
   line-height: 1.7;
   color: #000;
 }
-.battle-message p { margin: 0; }
+
+.battle-message p {
+  margin: 0;
+}
 
 .battle-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-template-rows: 1fr 1fr;
   gap: 10px;
-  flex: 1; /* remplit l'espace restant : blocs d'attaque plus gros */
+  flex: 1;
+  /* remplit l'espace restant : blocs d'attaque plus gros */
   min-height: 0;
 }
 
@@ -348,11 +565,13 @@
   align-items: center;
   gap: 4px;
 }
+
 .bttn-action .action-label {
   display: block;
   font-size: 13px;
   font-weight: 800;
 }
+
 .bttn-action .action-desc {
   display: block;
   font-size: 8px;
@@ -361,15 +580,28 @@
   text-transform: none;
   font-family: 'Press Start 2P', monospace;
 }
-.bttn-action[data-act='griffer'] { background: #e86850; }
-.bttn-action[data-act='special'] { background: #9858a0; }
-.bttn-action[data-act='abri'] { background: #58a060; }
-.bttn-action[data-act='flee'] { background: #4878b0; }
+
+.bttn-action[data-act='griffer'] {
+  background: #e86850;
+}
+
+.bttn-action[data-act='special'] {
+  background: #9858a0;
+}
+
+.bttn-action[data-act='abri'] {
+  background: #58a060;
+}
+
+.bttn-action[data-act='flee'] {
+  background: #4878b0;
+}
 
 .bttn-action:active {
   transform: translate(3px, 3px);
   box-shadow: 0 0 0 rgba(0, 0, 0, 0.5);
 }
+
 .bttn-action:disabled {
   filter: grayscale(0.7) brightness(0.7);
   cursor: not-allowed;
@@ -381,17 +613,44 @@
 }
 
 /* Animations d'impact */
-.sprite.hit { animation: hitShake 0.3s; }
-@keyframes hitShake {
-  0%, 100% { transform: translate(0); }
-  25% { transform: translate(-6px); }
-  75% { transform: translate(6px); }
+.sprite.hit {
+  animation: hitShake 0.3s;
 }
-.sprite-player.hit { animation: hitShakeP 0.3s; }
+
+@keyframes hitShake {
+
+  0%,
+  100% {
+    transform: translate(0);
+  }
+
+  25% {
+    transform: translate(-6px);
+  }
+
+  75% {
+    transform: translate(6px);
+  }
+}
+
+.sprite-player.hit {
+  animation: hitShakeP 0.3s;
+}
+
 @keyframes hitShakeP {
-  0%, 100% { transform: scaleX(-1) translate(0); }
-  25% { transform: scaleX(-1) translate(-6px); }
-  75% { transform: scaleX(-1) translate(6px); }
+
+  0%,
+  100% {
+    transform: scaleX(-1) translate(0);
+  }
+
+  25% {
+    transform: scaleX(-1) translate(-6px);
+  }
+
+  75% {
+    transform: scaleX(-1) translate(6px);
+  }
 }
 
 /* Écran de résultat (victoire / défaite) */
@@ -404,6 +663,7 @@
   justify-content: center;
   background: rgba(0, 0, 0, 0.6);
 }
+
 .result-card {
   background: #fff;
   padding: 28px;
@@ -412,14 +672,23 @@
   text-align: center;
   color: #000;
 }
-.result-title { font-size: 18px; margin: 0 0 14px; }
+
+.result-title {
+  font-size: 18px;
+  margin: 0 0 14px;
+}
+
 .result-detail {
   font-size: 10px;
   line-height: 1.8;
   white-space: pre-line;
   margin: 0 0 20px;
 }
-.result-btn { font-size: 12px; padding: 12px 20px; }
+
+.result-btn {
+  font-size: 12px;
+  padding: 12px 20px;
+}
 
 /* === STATISTIQUES / HISTORIQUE === */
 .stats-summary {
@@ -459,8 +728,14 @@
   font-size: 9px;
   box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
 }
-.history-row.win { border-left-color: #2a8a4a; }
-.history-row.lose { border-left-color: #c33; }
+
+.history-row.win {
+  border-left-color: #2a8a4a;
+}
+
+.history-row.lose {
+  border-left-color: #c33;
+}
 
 .history-row .h-top {
   display: flex;
@@ -468,11 +743,28 @@
   align-items: center;
   margin-bottom: 8px;
 }
-.history-row .h-res { font-size: 11px; }
-.history-row.win .h-res { color: #2a8a4a; }
-.history-row.lose .h-res { color: #c33; }
-.history-row .h-date { color: #777; font-size: 8px; }
-.history-row .h-detail { color: #555; line-height: 1.5; }
+
+.history-row .h-res {
+  font-size: 11px;
+}
+
+.history-row.win .h-res {
+  color: #2a8a4a;
+}
+
+.history-row.lose .h-res {
+  color: #c33;
+}
+
+.history-row .h-date {
+  color: #777;
+  font-size: 8px;
+}
+
+.history-row .h-detail {
+  color: #555;
+  line-height: 1.5;
+}
 
 /* === OBJET SUR LA CARTE === */
 .cat-card-item {
@@ -526,23 +818,50 @@
 }
 
 /* === ANIMATIONS DE COMBAT === */
-.sprite-enemy.enter { animation: enterE 0.6s ease-out; }
-@keyframes enterE {
-  from { transform: translateX(120px); opacity: 0; }
-  to { transform: translateX(0); opacity: 1; }
+.sprite-enemy.enter {
+  animation: enterE 0.6s ease-out;
 }
 
-.sprite-enemy.lunge { animation: lungeE 0.4s ease; }
-@keyframes lungeE {
-  50% { transform: translateX(-26px); }
+@keyframes enterE {
+  from {
+    transform: translateX(120px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
 }
-.sprite-player.lunge { animation: lungeP 0.4s ease; }
+
+.sprite-enemy.lunge {
+  animation: lungeE 0.4s ease;
+}
+
+@keyframes lungeE {
+  50% {
+    transform: translateX(-26px);
+  }
+}
+
+.sprite-player.lunge {
+  animation: lungeP 0.4s ease;
+}
+
 @keyframes lungeP {
-  50% { transform: scaleX(-1) translateX(-26px); }
+  50% {
+    transform: scaleX(-1) translateX(-26px);
+  }
 }
 
 /* K.O. : fondu + grisaille (ne touche pas au transform, valable joueur & ennemi) */
-.sprite.faint { animation: faintA 0.6s forwards; }
+.sprite.faint {
+  animation: faintA 0.6s forwards;
+}
+
 @keyframes faintA {
-  to { opacity: 0; filter: grayscale(1) brightness(1.4); }
+  to {
+    opacity: 0;
+    filter: grayscale(1) brightness(1.4);
+  }
 }
