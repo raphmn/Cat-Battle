@@ -24,6 +24,7 @@ html, body {
   scrollbar-width: none;
   -ms-overflow-style: none;
   touch-action: manipulation;
+  overscroll-behavior: none;
 }
 
 /* === OVERLAY ROTATION MOBILE === */
@@ -456,13 +457,11 @@ html, body {
   box-sizing: border-box;
   padding: 20px;
   pointer-events: auto;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 
 #scene-adopt {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 
 .scene-title {
