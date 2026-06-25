@@ -30,8 +30,41 @@ function pickBattleTrack() {
 }
 
 let clickBuffer = null;
+let clawBuffer = null;
+let damageBuffer = null;
+let criticalBuffer = null;
+let failBuffer = null;
+let velocityBuffer = null;
 let bgmGain = null;
 let bgmSource = null;
+let critFallback = new Audio('/audio/combat/UI_critical.mp3');
+
+function playBuffer(buffer) {
+  const c = audioCtx();
+  if (!c || !buffer) return;
+  const source = c.createBufferSource();
+  source.buffer = buffer;
+  const gain = c.createGain();
+  gain.gain.value = sfxVol;
+  source.connect(gain);
+  gain.connect(c.destination);
+  source.start(0);
+}
+
+async function loadSound(url) {
+  try {
+    const res = await fetch(url);
+    const arr = await res.arrayBuffer();
+    const c = audioCtx();
+    return await new Promise((resolve, reject) => {
+      const p = c.decodeAudioData(arr, resolve, reject);
+      if (p) p.then(resolve).catch(reject);
+    });
+  } catch (e) {
+    console.warn('Failed to load', url, e);
+    return null;
+  }
+}
 
 export async function initAudio() {
   bgm = document.getElementById('bgm');
@@ -51,14 +84,12 @@ export async function initAudio() {
     }
   }
 
-  try {
-    const response = await fetch('/audio/menu_click.mp3');
-    const arrayBuffer = await response.arrayBuffer();
-    const c = audioCtx();
-    clickBuffer = await c.decodeAudioData(arrayBuffer);
-  } catch (err) {
-    console.warn('Failed to load WebAudio sfx', err);
-  }
+  clickBuffer = await loadSound('/audio/menu_click.mp3');
+  clawBuffer = await loadSound('/audio/combat/claw.wav');
+  damageBuffer = await loadSound('/audio/combat/damage.mp3');
+  criticalBuffer = await loadSound('/audio/combat/UI_critical.mp3');
+  failBuffer = await loadSound('/audio/combat/fail.mp3');
+  velocityBuffer = await loadSound('/audio/combat/velocity.mp3');
 }
 
 export function startBgm(volume) {
@@ -84,15 +115,7 @@ export function setSfxVolume(v) {
 
 export function playSfx() {
   if (clickBuffer) {
-    const c = audioCtx();
-    if (!c) return;
-    const source = c.createBufferSource();
-    source.buffer = clickBuffer;
-    const gain = c.createGain();
-    gain.gain.value = sfxVol;
-    source.connect(gain);
-    gain.connect(c.destination);
-    source.start(0);
+    playBuffer(clickBuffer);
   } else {
     if (!sfx) return;
     sfx.currentTime = 0;
@@ -134,7 +157,26 @@ function playTone(freq, dur, type = 'square', slideTo = null) {
 }
 
 export function sfxHit() {
-  playTone(180, 0.12, 'square');
+  if (damageBuffer) playBuffer(damageBuffer);
+  else playTone(180, 0.12, 'square');
+}
+export function sfxClaw() {
+  if (clawBuffer) playBuffer(clawBuffer);
+}
+export function sfxCritical() {
+  if (criticalBuffer) {
+    playBuffer(criticalBuffer);
+  } else {
+    critFallback.currentTime = 0;
+    critFallback.volume = sfxVol;
+    critFallback.play().catch(e => console.warn('critFallback err', e));
+  }
+}
+export function sfxFail() {
+  if (failBuffer) playBuffer(failBuffer);
+}
+export function sfxVelocity() {
+  if (velocityBuffer) playBuffer(velocityBuffer);
 }
 export function sfxSpecial() {
   playTone(320, 0.2, 'sawtooth', 540);

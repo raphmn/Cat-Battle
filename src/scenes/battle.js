@@ -9,7 +9,7 @@ import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
 import { generateBot, generateRandomBot } from '../data/levels.js';
 import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
-import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint } from '../core/audio.js';
+import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint, sfxClaw, sfxCritical, sfxFail, sfxVelocity } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
 import { setAssetEl } from '../core/asset.js';
 import { toBackSprite, CAT_SPRITES } from '../data/catSprites.js';
@@ -277,20 +277,32 @@ async function playEvents(events) {
       if (ev.actionId === 'special') {
         showCenterFx('special');
         sfxSpecial();
+        sfxCritical();
+      } else if (ev.actionId === 'griffer' || !ev.actionId) {
+        // Assume basic attack is claw
+        sfxClaw();
       }
-      await wait(900);
+      await wait(1400);
     } else if (ev.type === 'shield') {
       setMessage(ev.text);
       showCenterFx('shield');
-      await wait(900);
+      sfxVelocity();
+      await wait(1400);
     } else if (ev.type === 'faint') {
       setMessage(ev.text);
       faint(ev.side);
       sfxFaint();
-      await wait(900);
+      await wait(1400);
     } else if (ev.type === 'message') {
       setMessage(ev.text);
-      await wait(900);
+      const txt = (ev.text || '').toLowerCase();
+      if (txt.includes('critique')) {
+        sfxCritical();
+      } else if (txt.includes('raté') || txt.includes('abri')) {
+        sfxVelocity();
+        if (txt.includes('raté')) setTimeout(sfxFail, 150);
+      }
+      await wait(1400);
     } else if (ev.type === 'damage') {
       shake(ev.targetSide);
       showDamage(ev.targetSide, ev.dmg);
@@ -299,7 +311,7 @@ async function playEvents(events) {
       const bar = ev.targetSide === 'player' ? els.playerHp : els.enemyHp;
       setBar(bar, ev.hp, ev.maxpv);
       if (ev.targetSide === 'player') els.playerHpNum.textContent = `${ev.hp}/${ev.maxpv}`;
-      await wait(550);
+      await wait(800);
     }
   }
 }
