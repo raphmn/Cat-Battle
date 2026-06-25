@@ -1,159 +1,180 @@
 <!doctype html>
 <html lang="fr">
-  <head>
-    <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="theme-color" content="#000000" />
-    <link rel="manifest" href="/manifest.json" />
-    <title>Cat Battles</title>
-  </head>
-  <body>
-    <!-- Overlay de rotation pour mobile paysage -->
-    <div id="rotate-overlay">
-      <div>📱 Veuillez tourner votre appareil en mode portrait.</div>
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#000000" />
+  <link rel="manifest" href="/manifest.json" />
+  <title>Cat Battles</title>
+</head>
+
+<body>
+  <!-- Overlay de rotation pour mobile paysage -->
+  <div id="rotate-overlay">
+    <div>📱 Veuillez tourner votre appareil en mode portrait.</div>
+  </div>
+
+  <!-- Conteneur principal du jeu -->
+  <div id="game-container">
+
+    <!-- Audio Player -->
+    <audio id="bgm" loop>
+      <source src="/audio/ost1.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Loading Screen -->
+    <div id="loading-screen">
+      <div id="loading-text">Chargement en cours...</div>
+      <button id="btn-start">Click to Start</button>
     </div>
 
-    <!-- Conteneur principal du jeu -->
-    <div id="game-container">
-      
-      <!-- Audio Player -->
-      <audio id="bgm" loop>
-        <source src="/audio/ost1.mp3" type="audio/mpeg">
-      </audio>
+    <!-- Detourage Overlay (Hidden initially) -->
+    <div id="detourage-overlay" style="display: none;">
+      <div class="spinner"></div>
+      <div id="detourage-text">Détourage en cours...<br><span
+          style="font-size:8px;color:#aaa;margin-top:10px;display:block;">(peut être long au 1er usage)</span></div>
+    </div>
 
-      <!-- Loading Screen -->
-      <div id="loading-screen">
-        <div id="loading-text">Chargement en cours...</div>
-        <button id="btn-start">Click to Start</button>
+    <!-- UI Layer (Hidden initially) -->
+    <div id="ui-layer" style="display: none;">
+
+      <!-- Player Profile -->
+      <div id="player-profile" title="Changer de nom">
+        <div class="pp-icon">🐱</div>
+        <div id="player-name">Dresseur</div>
       </div>
 
-      <!-- Detourage Overlay (Hidden initially) -->
-      <div id="detourage-overlay" style="display: none;">
-        <div class="spinner"></div>
-        <div id="detourage-text">Détourage en cours...<br><span style="font-size:8px;color:#aaa;margin-top:10px;display:block;">(peut être long au 1er usage)</span></div>
+      <!-- Lower Background -->
+      <div id="home-bg-lower"></div>
+
+      <!-- Logo Area -->
+      <div id="logo-container">
+        <div class="logo-ellipse"></div>
+        <img src="/sprites/logo_nobg.png" alt="Cat Battle Logo" id="main-logo" />
       </div>
 
-      <!-- UI Layer (Hidden initially) -->
-      <div id="ui-layer" style="display: none;">
-        
-        <!-- Player Profile -->
-        <div id="player-profile" title="Changer de nom">
-          <div class="pp-icon">🐱</div>
-          <div id="player-name">Dresseur</div>
-        </div>
-
-        <!-- Lower Background -->
-        <div id="home-bg-lower"></div>
-
-        <!-- Logo Area -->
-        <div id="logo-container">
-          <div class="logo-ellipse"></div>
-          <img src="/sprites/logo_nobg.png" alt="Cat Battle Logo" id="main-logo" />
-        </div>
-
-        <!-- Center Menu -->
-        <div id="center-menu">
-          <button id="btn-play" class="action-btn">CAMPAGNE</button>
-          <button id="btn-random" class="action-btn">ALEATOIRE</button>
-          <button id="btn-cat-list" class="action-btn">Liste Chats</button>
-        </div>
-
-        <!-- Drawer Menu -->
-        <div id="bottom-drawer">
-          <button id="btn-stats" class="drawer-btn"><img src="/sprites/UI/History.png" alt="Historique" class="drawer-icon" /><span class="drawer-label">Historique</span></button>
-          <button id="btn-settings" class="drawer-btn"><img src="/sprites/UI/Settings.png" alt="Audio" class="drawer-icon" /><span class="drawer-label">Audio</span></button>
-        </div>
-
+      <!-- Center Menu -->
+      <div id="center-menu">
+        <button id="btn-play" class="action-btn">CAMPAGNE</button>
+        <button id="btn-random" class="action-btn">ALEATOIRE</button>
+        <button id="btn-cat-list" class="action-btn">Liste Chats</button>
       </div>
 
-      <!-- Cat List Scene (Hidden initially) -->
-      <div id="scene-cat-list" class="scene" style="display: none;">
-        <button id="btn-back-cat-list" class="btn-back">⬅ Retour</button>
-        
-        <div class="scene-title">Vos Chats</div>
-        
-        <div class="scene-content" style="flex-direction: column; justify-content: flex-start; padding-top: 20px; overflow-y: auto;">
-          <p id="cat-list-empty-msg">Aucun chat</p>
-          <div id="cat-list-items" style="display: none; width: 100%; max-width: 400px; padding-bottom: 80px;"></div>
-          <div id="cat-list-max-reached" style="display: none; text-align: center; padding: 20px; background: #ff4444; border: 4px solid #000; border-radius: 12px; color: white; font-weight: bold; width: 80%; max-width: 300px; margin-top: 20px;">Nombre maximum de chats atteint (5/5)</div>
-        </div>
-        
-        <button id="btn-adopt" class="action-btn" style="position: absolute; bottom: 20px;">Adopter</button>
+      <!-- Drawer Menu -->
+      <div id="bottom-drawer">
+        <button id="btn-stats" class="drawer-btn"><img src="/sprites/UI/History.png" alt="Historique"
+            class="drawer-icon" /><span class="drawer-label">Historique</span></button>
+        <button id="btn-settings" class="drawer-btn"><img src="/sprites/UI/Settings.png" alt="Audio"
+            class="drawer-icon" /><span class="drawer-label">Audio</span></button>
       </div>
-
-      <!-- Adopt Cat Scene (Hidden initially) -->
-      <div id="scene-adopt" class="scene" style="display: none;">
-        <div class="scene-title">Adopter un Chat</div>
-        
-        <form id="form-adopt" class="retro-box" style="padding: 20px; width: 80%; max-width: 320px; margin-top: 20px; text-align: left; color: #000; font-size: 12px; line-height: 2;">
-          
-          <label for="adopt-name">Nom :</label>
-          <input type="text" id="adopt-name" class="retro-input" required maxlength="12" style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
-          
-          <div class="form-group">
-            <label for="adopt-type-slider">Type :</label>
-            <input type="range" id="adopt-type-slider" min="0" max="2" step="1" value="1" style="width: 100%;">
-            <div id="adopt-type-display" style="text-align: center; margin-top: 10px; font-weight: bold; transition: color 0.3s; color: #ffcc00; margin-bottom: 8px;">Base</div>
-          <div id="adopt-type-description" style="font-size: 10px; color: #444; min-height: 34px; text-align: center; margin-bottom: 12px; padding: 0 6px;">Équilibré : bon compromis entre vie, défense, attaque et vitesse.</div>
-          </div>
-
-          <label>Sprite (ou 📷 pour une photo détourée) :</label>
-          <div id="adopt-sprite-grid" style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px;"></div>
-          <input type="file" id="adopt-photo" accept="image/*" capture="environment" hidden>
-          <div id="adopt-photo-status" style="font-size: 9px; color: #666; margin-bottom: 12px; display: none;"></div>
-
-          <label>Objets :</label>
-          <div id="adopt-items-list" style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
-            <!-- Items draggables générés par JS -->
-          </div>
-          
-          <div id="adopt-items-help" style="text-align: center; font-size: 11px; color: #666; margin-bottom: 15px;">
-            🎒 Cliquez sur un objet ci-dessus pour l'équiper (0/2)
-          </div>
-          
-          <div id="adopt-equipped-items" style="display: flex; gap: 10px; margin-bottom: 15px; min-height: 50px;">
-            <!-- Objets équipés affichés ici -->
-          </div>
-
-          <div style="display: flex; justify-content: space-between;">
-            <button type="button" id="btn-cancel-adopt" class="retro-button" style="font-size: 10px; padding: 10px;">Annuler</button>
-            <button type="submit" id="btn-submit-adopt" class="retro-button" style="font-size: 10px; padding: 10px; background-color: #44ff44;">Ajouter</button>
-          </div>
-        </form>
-      </div>
-
-      <!-- Sound Settings Dialog -->
-      <dialog id="sound-dialog">
-        <p>Parametres Audio</p>
-        <div class="slider-container">
-          <label for="music-volume">Musique :</label>
-          <input type="range" id="music-volume" min="0" max="1" step="0.1" value="0.5">
-        </div>
-        <div class="slider-container">
-          <label for="sfx-volume">Effets :</label>
-          <input type="range" id="sfx-volume" min="0" max="1" step="0.1" value="0.5">
-        </div>
-        <button id="btn-close-sound">Fermer</button>
-      </dialog>
-
-      <!-- Dialog Box for "À implémenter" -->
-      <dialog id="impl-dialog">
-        <p>⚠️ Cette fonctionnalité reste à implémenter.</p>
-        <button id="btn-close-dialog">Fermer</button>
-      </dialog>
-
-      <!-- Delete Confirmation Dialog -->
-      <dialog id="confirm-delete-dialog" style="text-align: center;">
-        <p style="margin-bottom: 20px;">Voulez-vous vraiment relâcher ce chat ?</p>
-        <div style="display: flex; justify-content: space-around;">
-          <button id="btn-cancel-delete" class="retro-button" style="background-color: #ccc; font-size: 10px; padding: 10px 20px;">Non</button>
-          <button id="btn-confirm-delete" class="retro-button" style="background-color: #ff4444; color: white; font-size: 10px; padding: 10px 20px;">Oui</button>
-        </div>
-      </dialog>
 
     </div>
 
-    <script type="module" src="/src/main.js"></script>
-  </body>
+    <!-- Cat List Scene (Hidden initially) -->
+    <div id="scene-cat-list" class="scene" style="display: none;">
+      <button id="btn-back-cat-list" class="btn-back">🠔 Retour</button>
+
+      <div class="scene-title">Vos Chats</div>
+
+      <div class="scene-content"
+        style="flex-direction: column; justify-content: flex-start; padding-top: 50px; overflow-y: auto;">
+        <p id="cat-list-empty-msg">Aucun chat</p>
+        <div id="cat-list-items" style="display: none; width: 100%; max-width: 400px; padding-bottom: 80px;"></div>
+        <div id="cat-list-max-reached"
+          style="display: none; text-align: center; padding: 20px; background: #ff4444; border: 4px solid #000; border-radius: 12px; color: white; font-weight: bold; width: 80%; max-width: 300px; margin-top: 20px;">
+          Nombre maximum de chats atteint (5/5)</div>
+      </div>
+
+      <button id="btn-adopt" class="action-btn" style="position: absolute; bottom: 20px;">Adopter</button>
+    </div>
+
+    <!-- Adopt Cat Scene (Hidden initially) -->
+    <div id="scene-adopt" class="scene" style="display: none;">
+      <div class="scene-title">Adopter un Chat</div>
+
+      <form id="form-adopt" class="retro-box"
+        style="padding: 20px; width: 85%; max-width: 450px; margin-top: 50px; text-align: left; color: #000; font-size: 12px; line-height: 2;">
+
+        <label for="adopt-name">Nom :</label>
+        <input type="text" id="adopt-name" class="retro-input" required maxlength="12"
+          style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+
+        <div class="form-group">
+          <label for="adopt-type-slider">Type :</label>
+          <input type="range" id="adopt-type-slider" min="0" max="2" step="1" value="1" style="width: 100%;">
+          <div id="adopt-type-display"
+            style="text-align: center; margin-top: 10px; font-weight: bold; transition: color 0.3s; color: #ffcc00; margin-bottom: 8px;">
+            Base</div>
+          <div id="adopt-type-description"
+            style="font-size: 10px; color: #444; min-height: 34px; text-align: center; margin-bottom: 12px; padding: 0 6px;">
+            Équilibré : bon compromis entre vie, défense, attaque et vitesse.</div>
+        </div>
+
+        <label>Sprite (ou 📷 pour une photo détourée) :</label>
+        <div id="adopt-sprite-grid"
+          style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px;"></div>
+        <input type="file" id="adopt-photo" accept="image/*" capture="environment" hidden>
+        <div id="adopt-photo-status" style="font-size: 9px; color: #666; margin-bottom: 12px; display: none;"></div>
+
+        <label>Objets :</label>
+        <div id="adopt-items-list"
+          style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+          <!-- Items draggables générés par JS -->
+        </div>
+
+        <div id="adopt-items-help" style="text-align: center; font-size: 11px; color: #666; margin-bottom: 15px;">
+          🎒 Cliquez sur un objet ci-dessus pour l'équiper (0/2)
+        </div>
+
+        <div id="adopt-equipped-items" style="display: flex; gap: 10px; margin-bottom: 15px; min-height: 50px;">
+          <!-- Objets équipés affichés ici -->
+        </div>
+
+        <div style="display: flex; justify-content: space-between;">
+          <button type="button" id="btn-cancel-adopt" class="retro-button"
+            style="font-size: 10px; padding: 10px;">Annuler</button>
+          <button type="submit" id="btn-submit-adopt" class="retro-button"
+            style="font-size: 10px; padding: 10px; background-color: #44ff44;">Ajouter</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Sound Settings Dialog -->
+    <dialog id="sound-dialog">
+      <p>Parametres Audio</p>
+      <div class="slider-container">
+        <label for="music-volume">Musique :</label>
+        <input type="range" id="music-volume" min="0" max="1" step="0.1" value="0.5">
+      </div>
+      <div class="slider-container">
+        <label for="sfx-volume">Effets :</label>
+        <input type="range" id="sfx-volume" min="0" max="1" step="0.1" value="0.5">
+      </div>
+      <button id="btn-close-sound">Fermer</button>
+    </dialog>
+
+    <!-- Dialog Box for "À implémenter" -->
+    <dialog id="impl-dialog">
+      <p>⚠️ Cette fonctionnalité reste à implémenter.</p>
+      <button id="btn-close-dialog">Fermer</button>
+    </dialog>
+
+    <!-- Delete Confirmation Dialog -->
+    <dialog id="confirm-delete-dialog" style="text-align: center;">
+      <p style="margin-bottom: 20px;">Voulez-vous vraiment relâcher ce chat ?</p>
+      <div style="display: flex; justify-content: space-around;">
+        <button id="btn-cancel-delete" class="retro-button"
+          style="background-color: #ccc; font-size: 10px; padding: 10px 20px;">Non</button>
+        <button id="btn-confirm-delete" class="retro-button"
+          style="background-color: #ff4444; color: white; font-size: 10px; padding: 10px 20px;">Oui</button>
+      </div>
+    </dialog>
+
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+
 </html>

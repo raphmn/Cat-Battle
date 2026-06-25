@@ -16,6 +16,15 @@ html, body {
   align-items: center;
 }
 
+/* Masquer toutes les scrollbars (le défilement tactile ou molette continue de fonctionner) */
+::-webkit-scrollbar {
+  display: none;
+}
+* {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
 /* === OVERLAY ROTATION MOBILE === */
 #rotate-overlay {
   display: none;
