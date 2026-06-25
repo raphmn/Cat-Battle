@@ -105,9 +105,9 @@
     <div id="scene-adopt" class="scene" style="display: none;">
       <div class="scene-title">Adopter un Chat</div>
 
-      <div class="scene-content" style="flex-direction: column; justify-content: flex-start; padding-top: 30px; padding-bottom: 30px; overflow-y: auto; width: 100%;">
+      <div class="scene-content" style="flex-direction: column; justify-content: flex-start; padding-top: 30px; padding-bottom: 30px; overflow-y: auto; overflow-x: hidden; width: 100%;">
         <form id="form-adopt" class="retro-box"
-          style="padding: 20px; width: 85%; max-width: 450px; text-align: left; color: #000; font-size: 12px; line-height: 2; margin: 0 auto;">
+          style="padding: 15px; width: 95%; max-width: 500px; box-sizing: border-box; text-align: left; color: #000; font-size: 12px; line-height: 2; margin: 0 auto; overflow-x: hidden;">
 
         <label for="adopt-name">Nom :</label>
         <input type="text" id="adopt-name" class="retro-input" required maxlength="12"
@@ -140,7 +140,7 @@
           🎒 Cliquez sur un objet ci-dessus pour l'équiper (0/2)
         </div>
 
-        <div id="adopt-equipped-items" style="display: flex; gap: 10px; margin-bottom: 15px; min-height: 50px;">
+        <div id="adopt-equipped-items" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; min-height: 50px;">
           <!-- Objets équipés affichés ici -->
         </div>
 
