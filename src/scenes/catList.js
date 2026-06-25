@@ -8,6 +8,7 @@ import { getCats, addCat, deleteCat } from '../core/storage.js';
 import { Cat, DomesticCat, WildCat } from '../entities/Cat.js';
 import { ITEMS } from '../data/items.js';
 import { assetMarkup, photoToSprite, isImageAsset } from '../core/asset.js';
+import { CAT_SPRITES } from '../data/catSprites.js';
 
 // slider 0/1/2 -> type stocké + libellé affiché
 const TYPE_MAPPING = {
@@ -34,7 +35,7 @@ TYPE_MAPPING.domestique = TYPE_MAPPING[0];
 TYPE_MAPPING.base = TYPE_MAPPING[1];
 TYPE_MAPPING.sauvage = TYPE_MAPPING[2];
 
-const ASSET_OPTIONS = ['🐱', '🐈', '🐈‍⬛', '😺', '😼', '🐯', '🦁'];
+const ASSET_OPTIONS = CAT_SPRITES.map((c) => c.asset); // sprites SVG (data URL)
 
 let catIndexToDelete = null;
 
@@ -61,13 +62,14 @@ export function initCatList() {
   // Grille : tuiles emoji + une tuile 📷 (charge/affiche la photo détourée).
   const renderSpriteGrid = () => {
     spriteGrid.innerHTML = '';
-    ASSET_OPTIONS.forEach((emoji) => {
+    CAT_SPRITES.forEach((sprite) => {
       const tile = document.createElement('button');
       tile.type = 'button';
-      tile.className = 'sprite-tile' + (selectedAsset === emoji ? ' selected' : '');
-      tile.textContent = emoji;
+      tile.title = sprite.name;
+      tile.className = 'sprite-tile' + (selectedAsset === sprite.asset ? ' selected' : '');
+      tile.innerHTML = `<img src="${sprite.asset}" alt="${sprite.name}">`;
       tile.addEventListener('click', () => {
-        selectedAsset = emoji;
+        selectedAsset = sprite.asset;
         renderSpriteGrid();
       });
       spriteGrid.appendChild(tile);

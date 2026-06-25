@@ -5,8 +5,10 @@
 // Les niveaux sont regroupés en 3 bandes : Facile / Moyen / Difficile.
 // ==========================================
 
+import { CAT_SPRITE_ASSETS } from './catSprites.js';
+
 const NAMES = ['Minou', 'Bandit', 'Crocs', 'Tigrou', 'Moustache', 'Ombre', 'Néko', 'Félix', 'Patou', 'Roux', 'Zorro'];
-const ASSETS = ['🐱', '🐈', '🐈‍⬛', '😼', '😾', '🐯', '🦁'];
+const ASSETS = CAT_SPRITE_ASSETS; // sprites SVG des bots
 const TYPES = ['domestique', 'base', 'sauvage'];
 
 export const TOTAL_LEVELS = 9;

@@ -11,8 +11,17 @@ import { generateBot, generateRandomBot } from '../data/levels.js';
 import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
 import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
-import { mountWebGLBackground } from '../core/webglBackground.js';
 import { setAssetEl } from '../core/asset.js';
+
+// Fonds de combat pixel-art (jour/nuit, plusieurs biomes), choisis au hasard.
+const BATTLE_BGS = [
+  'beach', 'beach-2', 'beach-night',
+  'desert', 'desert-night',
+  'mountain', 'mountain-2', 'mountain-night',
+  'path', 'path-2', 'path-night',
+  'snow', 'snow-night',
+  'tall-grass', 'tall-grass-night',
+];
 
 const STAT_LABELS = { maxpv: 'PV', atk: 'ATK', def: 'DEF', vit: 'VIT' };
 const SKILLS = ['atk', 'def', 'vit']; // compétences gagnées après victoire
@@ -30,7 +39,6 @@ export function initBattle() {
   root.style.display = 'none';
   root.innerHTML = `
     <div class="battle-field">
-      <div class="battle-bg-ground"></div>
       <div class="hud hud-enemy">
         <div class="hud-name"><span class="bname"></span><span class="blevel"></span></div>
         <div class="hud-hpwrap"><span class="hp-tag">PV</span><div class="hp-bar"><div class="hp-fill"></div></div></div>
@@ -65,7 +73,12 @@ export function initBattle() {
   `;
   document.getElementById('game-container').appendChild(root);
   register('battle', root, 'flex');
-  mountWebGLBackground(root.querySelector('.battle-field')); // repli CSS auto si WebGL absent
+
+  // Précharge les fonds pour éviter le gros chargement au lancement d'un combat.
+  BATTLE_BGS.forEach((bg) => {
+    const img = new Image();
+    img.src = `/sprites/battle-bg/${bg}.png`;
+  });
 
   els = {
     enemyName: root.querySelector('.hud-enemy .bname'),
@@ -81,6 +94,7 @@ export function initBattle() {
     msg: root.querySelector('.msg-text'),
     actions: root.querySelector('.battle-actions'),
     actionBtns: [...root.querySelectorAll('.bttn-action')],
+    field: root.querySelector('.battle-field'),
     result: root.querySelector('.battle-result'),
     resultTitle: root.querySelector('.result-title'),
     resultDetail: root.querySelector('.result-detail'),
@@ -123,6 +137,10 @@ export function startBattle(botLevel, catIndex, random = false) {
   els.playerLevel.textContent = 'Niv.' + battle.player.lvl;
   setAssetEl(els.playerSprite, battle.player.asset);
   setLvlProgress(cat.wins || 0);
+
+  // Fond de combat aléatoire.
+  const bg = BATTLE_BGS[Math.floor(Math.random() * BATTLE_BGS.length)];
+  els.field.style.backgroundImage = `url('/sprites/battle-bg/${bg}.png')`;
   els.result.style.display = 'none';
 
   // Réinitialise les classes d'animation + entrée du bot.

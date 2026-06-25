@@ -1,11 +1,17 @@
-const CACHE_NAME = 'catbattle-v5';
+const CACHE_NAME = 'catbattle-v6';
 const ASSETS_TO_CACHE = [
   '/',
   '/index.html',
   '/manifest.json',
   '/favicon.svg',
-  '/audio/ost1.mp3',
   '/audio/menu_click.mp3',
+  '/audio/ost1.mp3',
+  '/audio/ost2.mp3',
+  '/audio/ost5.mp3',
+  '/audio/ost6.mp3',
+  '/audio/ost7.mp3',
+  '/audio/ost8.mp3',
+  '/audio/ost9.mp3',
 ];
 
 // Installation : pré-cache la coquille de base (pour le hors-ligne).

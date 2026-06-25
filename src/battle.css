@@ -79,16 +79,8 @@
   width: 100%;
   height: 48%;
   overflow: hidden;
-  background: linear-gradient(180deg, #9be0f0 0%, #bdeaa0 55%, #8fd070 100%);
-}
-
-.battle-bg-ground {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 42%;
-  background: linear-gradient(180deg, #8fd070, #6cba54);
+  background: #6cba54 center / cover no-repeat;
+  image-rendering: pixelated; /* fonds pixel-art nets */
 }
 
 .platform {
@@ -96,10 +88,10 @@
   width: 56%;
   height: 34px;
   border-radius: 50%;
-  background: radial-gradient(ellipse at center, #7cc85a 0%, #5aa83e 70%, rgba(0, 0, 0, 0.12) 100%);
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.6) 60%, rgba(255, 255, 255, 0) 100%);
 }
-.platform-enemy { top: 27%; right: 5%; }
-.platform-player { bottom: 7%; left: 5%; }
+.platform-enemy { top: 41%; right: 5%; }
+.platform-player { bottom: 2%; left: 5%; }
 
 .sprite {
   position: absolute;
@@ -107,7 +99,7 @@
   line-height: 1;
   filter: drop-shadow(0 4px 0 rgba(0, 0, 0, 0.25));
 }
-.sprite-enemy { top: 15%; right: 14%; }
+.sprite-enemy { top: 20%; right: 14%; }
 .sprite-player { bottom: 9%; left: 14%; transform: scaleX(-1); }
 .sprite .sprite-img {
   display: block;
