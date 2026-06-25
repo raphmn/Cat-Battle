@@ -1,3 +1,11 @@
+// ==========================================
+// Point d'entrée de l'application (chargé par index.html).
+// Rôle : importer les styles + la police, enregistrer et initialiser
+// toutes les scènes, gérer l'écran de démarrage, le son global sur les
+// boutons, et enregistrer le Service Worker (PWA / hors-ligne).
+// ==========================================
+
+import '@fontsource/press-start-2p'; // police hébergée localement (pas de dépendance réseau)
 import './style.css';
 import './battle.css';
 

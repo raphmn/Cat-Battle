@@ -32,6 +32,3 @@ export const ACTIONS = {
     description: 'Protège contre tous les dégâts du tour actuel.',
   },
 };
-
-// Ordre des 3 boutons d'action (le 4e bouton = Fuir).
-export const PLAYER_ACTIONS = ['griffer', 'special', 'abri'];

@@ -62,8 +62,3 @@ export function applyItemBonus(stats, itemIds) {
   });
   return out;
 }
-
-export function itemLabel(itemId) {
-  const item = ITEMS[itemId];
-  return item && item.id ? item.name : '';
-}

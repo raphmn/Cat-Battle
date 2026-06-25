@@ -38,7 +38,7 @@ export const BOT_LEVELS = Array.from({ length: TOTAL_LEVELS }, (_, i) => makeLev
 const pickRand = (arr) => arr[Math.floor(Math.random() * arr.length)];
 const jitter = (v, j) => v + Math.round((Math.random() * 2 - 1) * j);
 
-export function getBotLevel(level) {
+function getBotLevel(level) {
   return BOT_LEVELS.find((b) => b.level === level) || BOT_LEVELS[0];
 }
 

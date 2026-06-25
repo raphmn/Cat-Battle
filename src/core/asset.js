@@ -4,7 +4,10 @@
 // ==========================================
 
 export function isImageAsset(a) {
-  return typeof a === 'string' && a.startsWith('data:');
+  return (
+    typeof a === 'string' &&
+    (a.startsWith('data:') || a.startsWith('/') || a.startsWith('http'))
+  );
 }
 
 // Renvoie le HTML pour afficher un asset inline (emoji texte ou <img>).

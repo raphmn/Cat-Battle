@@ -12,6 +12,7 @@
     "vite": "^8.0.12"
   },
   "dependencies": {
+    "@fontsource/press-start-2p": "^5.2.7",
     "@imgly/background-removal": "^1.7.0"
   }
 }

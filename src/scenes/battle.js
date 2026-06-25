@@ -12,6 +12,7 @@ import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
 import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
 import { setAssetEl } from '../core/asset.js';
+import { toBackSprite, CAT_SPRITES } from '../data/catSprites.js';
 
 // Fonds de combat pixel-art (jour/nuit, plusieurs biomes), choisis au hasard.
 const BATTLE_BGS = [
@@ -74,10 +75,14 @@ export function initBattle() {
   document.getElementById('game-container').appendChild(root);
   register('battle', root, 'flex');
 
-  // Précharge les fonds pour éviter le gros chargement au lancement d'un combat.
-  BATTLE_BGS.forEach((bg) => {
+  // Précharge fonds + sprites de chats pour éviter le chargement au lancement.
+  const preload = [
+    ...BATTLE_BGS.map((bg) => `/sprites/battle-bg/${bg}.png`),
+    ...CAT_SPRITES.flatMap((c) => [c.front, c.back]),
+  ];
+  preload.forEach((src) => {
     const img = new Image();
-    img.src = `/sprites/battle-bg/${bg}.png`;
+    img.src = src;
   });
 
   els = {
@@ -135,7 +140,7 @@ export function startBattle(botLevel, catIndex, random = false) {
   setAssetEl(els.enemySprite, battle.enemy.asset);
   els.playerName.textContent = battle.player.name;
   els.playerLevel.textContent = 'Niv.' + battle.player.lvl;
-  setAssetEl(els.playerSprite, battle.player.asset);
+  setAssetEl(els.playerSprite, toBackSprite(battle.player.asset));
   setLvlProgress(cat.wins || 0);
 
   // Fond de combat aléatoire.

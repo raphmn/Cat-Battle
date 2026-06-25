@@ -474,17 +474,6 @@
 .history-row .h-date { color: #777; font-size: 8px; }
 .history-row .h-detail { color: #555; line-height: 1.5; }
 
-/* === FOND ANIMÉ WEBGL === */
-.webgl-bg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 0;
-  display: block;
-}
-
 /* === OBJET SUR LA CARTE === */
 .cat-card-item {
   grid-column: 1 / -1;
