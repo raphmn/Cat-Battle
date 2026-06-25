@@ -101,6 +101,7 @@ html, body {
   align-items: center;
   color: #fff;
   transition: opacity 0.5s;
+  cursor: pointer;
 }
 
 #loading-text {

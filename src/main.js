@@ -40,7 +40,7 @@ const loadingScreen = document.getElementById('loading-screen');
 const btnStart = document.getElementById('btn-start');
 let audioStarted = false;
 
-btnStart.addEventListener('click', async () => {
+loadingScreen.addEventListener('click', async () => {
   if (!audioStarted) {
     startBgm(document.getElementById('music-volume').value);
     audioStarted = true;
