@@ -360,7 +360,7 @@ html, body {
   padding: 18px 12px;
   width: 100%;
   position: absolute;
-  bottom: 0;
+  bottom: 60px;
   box-sizing: border-box;
   z-index: 10;
 }

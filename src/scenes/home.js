@@ -42,15 +42,6 @@ export function initHome() {
   // Statistiques : historique des combats
   document.getElementById('btn-stats').addEventListener('click', () => navigate('stats'));
 
-  // Quitter le jeu : ferme l'onglet/la PWA si possible, sinon page vide.
-  document.getElementById('btn-quit').addEventListener('click', () => {
-    if (!confirm('Quitter le jeu ?')) return;
-    window.close();
-    // Repli : window.close() est ignoré si l'onglet n'a pas été ouvert par script.
-    document.body.innerHTML =
-      '<div style="display:flex;height:100vh;align-items:center;justify-content:center;color:#fff;font-family:\'Press Start 2P\',monospace;font-size:12px;text-align:center;padding:20px;">Merci d\'avoir joué !<br><br>Vous pouvez fermer cette fenêtre.</div>';
-  });
-
   // Fond plein écran aléatoire (jour / coucher de soleil / nuit / hiver)
   const randBg = Math.floor(Math.random() * 4) + 1;
   const lower = document.getElementById('home-bg-lower');
