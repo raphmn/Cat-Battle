@@ -323,6 +323,33 @@ html, body {
   box-shadow: inset 0 0 0 4px #6c3a74, 2px 2px 0px 0px rgba(0,0,0,0.5);
 }
 
+/* Grille de sprites à l'adoption */
+.sprite-tile {
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  background: #f8f8f8;
+  border: 2px solid #333;
+  border-radius: 8px;
+  cursor: pointer;
+  padding: 0;
+  overflow: hidden;
+  transition: transform 0.1s, border-color 0.1s, box-shadow 0.1s;
+}
+.sprite-tile:hover { transform: scale(1.06); }
+.sprite-tile.selected {
+  border-color: #44aaff;
+  box-shadow: 0 0 0 2px #44aaff;
+}
+.sprite-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  background: repeating-conic-gradient(#ddd 0% 25%, #fff 0% 50%) 50% / 12px 12px;
+}
+
 /* Bottom : Drawer Menu */
 #bottom-drawer {
   display: flex;

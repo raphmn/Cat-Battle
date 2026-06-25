@@ -7,7 +7,7 @@ import { navigate } from '../core/sceneManager.js';
 import { getCats, addCat, deleteCat } from '../core/storage.js';
 import { Cat, DomesticCat, WildCat } from '../entities/Cat.js';
 import { ITEMS } from '../data/items.js';
-import { assetMarkup, photoToSprite } from '../core/asset.js';
+import { assetMarkup, photoToSprite, isImageAsset } from '../core/asset.js';
 
 // slider 0/1/2 -> type stocké + libellé affiché
 const TYPE_MAPPING = {
@@ -46,25 +46,49 @@ export function initCatList() {
   const sliderType = document.getElementById('adopt-type-slider');
   const displayType = document.getElementById('adopt-type-display');
   const displayTypeDescription = document.getElementById('adopt-type-description');
-  const assetSelect = document.getElementById('adopt-sprite');
+  const spriteGrid = document.getElementById('adopt-sprite-grid');
   const itemsListContainer = document.getElementById('adopt-items-list');
   const itemsDropZone = document.getElementById('adopt-items-drop');
   const equippedItemsContainer = document.getElementById('adopt-equipped-items');
   const confirmDeleteDialog = document.getElementById('confirm-delete-dialog');
   const photoInput = document.getElementById('adopt-photo');
   const photoStatus = document.getElementById('adopt-photo-status');
-  const photoPreview = document.getElementById('adopt-photo-preview');
-  const photoImg = document.getElementById('adopt-photo-img');
-  const photoClear = document.getElementById('adopt-photo-clear');
 
   let adoptEquippedItems = [];
-  let adoptPhotoAsset = null; // sprite détouré (data URL) ou null
+  let selectedAsset = ASSET_OPTIONS[0]; // emoji OU data URL (photo détourée)
+  let photoAsset = null; // dernière photo détourée
 
-  const resetPhoto = () => {
-    adoptPhotoAsset = null;
+  // Grille : tuiles emoji + une tuile 📷 (charge/affiche la photo détourée).
+  const renderSpriteGrid = () => {
+    spriteGrid.innerHTML = '';
+    ASSET_OPTIONS.forEach((emoji) => {
+      const tile = document.createElement('button');
+      tile.type = 'button';
+      tile.className = 'sprite-tile' + (selectedAsset === emoji ? ' selected' : '');
+      tile.textContent = emoji;
+      tile.addEventListener('click', () => {
+        selectedAsset = emoji;
+        renderSpriteGrid();
+      });
+      spriteGrid.appendChild(tile);
+    });
+
+    const photoTile = document.createElement('button');
+    photoTile.type = 'button';
+    photoTile.title = 'Charger une photo';
+    const photoSelected = isImageAsset(selectedAsset);
+    photoTile.className = 'sprite-tile' + (photoSelected ? ' selected' : '');
+    photoTile.innerHTML = photoAsset ? `<img src="${photoAsset}" alt="photo">` : '📷';
+    photoTile.addEventListener('click', () => photoInput.click());
+    spriteGrid.appendChild(photoTile);
+  };
+
+  const resetSprite = () => {
+    selectedAsset = ASSET_OPTIONS[0];
+    photoAsset = null;
     if (photoInput) photoInput.value = '';
-    if (photoPreview) photoPreview.style.display = 'none';
     if (photoStatus) photoStatus.style.display = 'none';
+    renderSpriteGrid();
   };
 
   if (photoInput) {
@@ -74,29 +98,19 @@ export function initCatList() {
       photoStatus.style.display = 'block';
       photoStatus.style.color = '#666';
       photoStatus.textContent = 'Détourage en cours… (peut être long au 1er usage)';
-      photoPreview.style.display = 'none';
       try {
-        adoptPhotoAsset = await photoToSprite(file);
-        photoImg.src = adoptPhotoAsset;
-        photoPreview.style.display = 'block';
+        photoAsset = await photoToSprite(file);
+        selectedAsset = photoAsset;
         photoStatus.style.display = 'none';
+        renderSpriteGrid();
       } catch (err) {
         console.error(err);
-        adoptPhotoAsset = null;
         photoStatus.style.color = '#c33';
         photoStatus.textContent = 'Échec du détourage. Réessaie avec une autre photo.';
       }
     });
   }
-  if (photoClear) photoClear.addEventListener('click', resetPhoto);
-
-  // Sprites (emoji) disponibles à l'adoption
-  ASSET_OPTIONS.forEach((s) => {
-    const opt = document.createElement('option');
-    opt.value = s;
-    opt.textContent = s;
-    assetSelect.appendChild(opt);
-  });
+  renderSpriteGrid();
 
   // Créer la liste des objets draggables
   const renderItemsList = () => {
@@ -204,7 +218,7 @@ export function initCatList() {
     renderEquippedItems();
     itemsDropZone.style.background = '#f6f0df';
     formAdopt.reset();
-    resetPhoto();
+    resetSprite();
     updateAdoptTypeInfo(1);
   });
 
@@ -216,7 +230,7 @@ export function initCatList() {
     navigate('catList');
     formAdopt.reset();
     adoptEquippedItems = [];
-    resetPhoto();
+    resetSprite();
     updateCatListState();
   });
 
@@ -224,7 +238,7 @@ export function initCatList() {
     e.preventDefault();
     const name = document.getElementById('adopt-name').value;
     const type = TYPE_MAPPING[sliderType.value].type;
-    const asset = adoptPhotoAsset || assetSelect.value; // photo détourée prioritaire
+    const asset = selectedAsset;
 
     let newCat;
     if (type === 'domestique') newCat = new DomesticCat(name, asset);
@@ -235,7 +249,7 @@ export function initCatList() {
     addCat(newCat.toJSON());
     formAdopt.reset();
     adoptEquippedItems = [];
-    resetPhoto();
+    resetSprite();
     updateCatListState();
     navigate('catList');
   });
