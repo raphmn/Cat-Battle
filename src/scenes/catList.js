@@ -49,7 +49,7 @@ export function initCatList() {
   const displayTypeDescription = document.getElementById('adopt-type-description');
   const spriteGrid = document.getElementById('adopt-sprite-grid');
   const itemsListContainer = document.getElementById('adopt-items-list');
-  const itemsDropZone = document.getElementById('adopt-items-drop');
+  const itemsHelp = document.getElementById('adopt-items-help');
   const equippedItemsContainer = document.getElementById('adopt-equipped-items');
   const confirmDeleteDialog = document.getElementById('confirm-delete-dialog');
   const photoInput = document.getElementById('adopt-photo');
@@ -97,17 +97,17 @@ export function initCatList() {
     photoInput.addEventListener('change', async (e) => {
       const file = e.target.files && e.target.files[0];
       if (!file) return;
-      
+
       const overlay = document.getElementById('detourage-overlay');
       if (overlay) overlay.style.display = 'flex';
-      
+
       photoStatus.style.display = 'block';
       photoStatus.style.color = '#666';
       photoStatus.textContent = 'Détourage en cours...';
-      
+
       // Laisse le temps au navigateur d'afficher l'overlay avant le traitement lourd
       await new Promise(r => setTimeout(r, 50));
-      
+
       try {
         photoAsset = await photoToSprite(file);
         selectedAsset = photoAsset;
@@ -125,48 +125,49 @@ export function initCatList() {
   }
   renderSpriteGrid();
 
-  // Créer la liste des objets draggables
+  // Créer la liste des objets cliquables
   const renderItemsList = () => {
     itemsListContainer.innerHTML = '';
     Object.values(ITEMS).forEach((item) => {
       if (!item.id) return;
       const itemEl = document.createElement('div');
-      itemEl.draggable = true;
-      itemEl.style.cssText = 'cursor: grab; padding: 8px; background: #f8f8f8; border: 2px solid #333; border-radius: 6px; text-align: center; font-size: 10px; font-weight: 800; user-select: none; display: flex; align-items: center; justify-content: center;';
+      itemEl.style.cssText = 'cursor: pointer; padding: 8px; background: #f8f8f8; border: 2px solid #333; border-radius: 6px; text-align: left; font-size: 10px; font-weight: 800; user-select: none; display: flex; align-items: center; justify-content: flex-start; gap: 10px; transition: transform 0.1s;';
+
+      const statLabels = { maxpv: 'PV', atk: 'ATK', def: 'DEF', vit: 'VIT' };
+      let statsHtml = '';
+      if (item.bonus) {
+        Object.entries(item.bonus).forEach(([stat, val]) => {
+          const color = val > 0 ? '#2a8a4a' : '#c33';
+          const sign = val > 0 ? '+' : '';
+          const label = statLabels[stat] || stat.toUpperCase();
+          statsHtml += `<div style="color: ${color}; font-size: 8px;">${sign}${val}% ${label}</div>`;
+        });
+      }
+
       itemEl.dataset.itemId = item.id;
       itemEl.title = item.name;
       itemEl.innerHTML = `
         <img src="${item.image}" alt="${item.name}" style="width:40px; height:40px; object-fit:contain;">
+        <div style="display: flex; flex-direction: column; gap: 2px;">
+          <div style="font-size: 9px; color: #333; margin-bottom: 2px;">${item.name}</div>
+          ${statsHtml}
+        </div>
       `;
-      itemEl.addEventListener('dragstart', (e) => {
-        e.dataTransfer.effectAllowed = 'copy';
-        e.dataTransfer.setData('text/plain', item.id);
+      // Effet visuel au clic
+      itemEl.addEventListener('mousedown', () => itemEl.style.transform = 'scale(0.95)');
+      itemEl.addEventListener('mouseup', () => itemEl.style.transform = 'scale(1)');
+      itemEl.addEventListener('mouseleave', () => itemEl.style.transform = 'scale(1)');
+
+      itemEl.addEventListener('click', () => {
+        if (!adoptEquippedItems.includes(item.id) && adoptEquippedItems.length < 2) {
+          adoptEquippedItems.push(item.id);
+          renderEquippedItems();
+        }
       });
       itemsListContainer.appendChild(itemEl);
     });
   };
   renderItemsList();
-
-  // Gestion du drop zone
-  itemsDropZone.addEventListener('dragover', (e) => {
-    e.preventDefault();
-    e.dataTransfer.dropEffect = 'copy';
-    itemsDropZone.style.background = '#ffe0e0';
-  });
-
-  itemsDropZone.addEventListener('dragleave', () => {
-    itemsDropZone.style.background = '#f6f0df';
-  });
-
-  itemsDropZone.addEventListener('drop', (e) => {
-    e.preventDefault();
-    itemsDropZone.style.background = '#f6f0df';
-    const itemId = e.dataTransfer.getData('text/plain');
-    if (itemId && !adoptEquippedItems.includes(itemId) && adoptEquippedItems.length < 2) {
-      adoptEquippedItems.push(itemId);
-      renderEquippedItems();
-    }
-  });
 
   const renderEquippedItems = () => {
     equippedItemsContainer.innerHTML = '';
@@ -174,10 +175,10 @@ export function initCatList() {
       const item = ITEMS[itemId];
       if (!item) return;
       const itemEl = document.createElement('div');
-      itemEl.style.cssText = 'display: flex; flex-direction: column; align-items: center; padding: 10px; background: #f6f0df; border: 2px solid #333; border-radius: 6px; position: relative; text-align: center; min-width: 80px; gap: 6px;';
+      itemEl.style.cssText = 'flex: 1; display: flex; flex-direction: column; align-items: center; padding: 10px; background: #f6f0df; border: 2px solid #333; border-radius: 6px; position: relative; text-align: center; min-width: 80px; gap: 6px;';
       itemEl.innerHTML = `
         <img src="${item.image}" alt="${item.name}" style="width: 48px; height: 48px; object-fit: contain;">
-        <div style="font-size: 8px; color: #555; line-height: 1.2; word-break: break-word; max-width: 75px;">${item.description}</div>
+        <div style="font-size: 8px; color: #555; line-height: 1.2; word-break: break-word; max-width: 100%;">${item.description}</div>
         <button type="button" style="position: absolute; top: 2px; right: 2px; width: 18px; height: 18px; background: #ff4444; color: white; border: 1px solid #000; border-radius: 3px; padding: 0; cursor: pointer; font-size: 10px; font-weight: bold;">×</button>
       `;
       itemEl.querySelector('button').addEventListener('click', () => {
@@ -186,6 +187,10 @@ export function initCatList() {
       });
       equippedItemsContainer.appendChild(itemEl);
     });
+
+    if (itemsHelp) {
+      itemsHelp.textContent = `🎒 Cliquez sur un objet ci-dessus pour l'équiper (${adoptEquippedItems.length}/2)`;
+    }
   };
 
   window.addEventListener('scene:change', (e) => {
@@ -229,7 +234,6 @@ export function initCatList() {
     sliderType.value = 1;
     adoptEquippedItems = [];
     renderEquippedItems();
-    itemsDropZone.style.background = '#f6f0df';
     formAdopt.reset();
     resetSprite();
     updateAdoptTypeInfo(1);
@@ -355,8 +359,8 @@ function renderCatList() {
     const items = Array.isArray(cat.items)
       ? cat.items.filter(Boolean)
       : cat.item
-      ? [cat.item]
-      : [];
+        ? [cat.item]
+        : [];
 
     if (items && items.length > 0) {
       items.forEach((itemId) => {
