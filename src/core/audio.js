@@ -29,20 +29,52 @@ function pickBattleTrack() {
   return t;
 }
 
-export function initAudio() {
+let clickBuffer = null;
+let bgmGain = null;
+let bgmSource = null;
+
+export async function initAudio() {
   bgm = document.getElementById('bgm');
   sfx = new Audio('/audio/menu_click.mp3');
   sfx.volume = sfxVol;
+  
+  const c = audioCtx();
+  if (c && !bgmSource && bgm) {
+    try {
+      bgmSource = c.createMediaElementSource(bgm);
+      bgmGain = c.createGain();
+      bgmGain.gain.value = bgm.volume;
+      bgmSource.connect(bgmGain);
+      bgmGain.connect(c.destination);
+    } catch (e) {
+      console.warn('Could not route bgm to WebAudio:', e);
+    }
+  }
+
+  try {
+    const response = await fetch('/audio/menu_click.mp3');
+    const arrayBuffer = await response.arrayBuffer();
+    const c = audioCtx();
+    clickBuffer = await c.decodeAudioData(arrayBuffer);
+  } catch (err) {
+    console.warn('Failed to load WebAudio sfx', err);
+  }
 }
 
 export function startBgm(volume) {
   if (!bgm) return;
-  if (volume != null) bgm.volume = parseFloat(volume);
+  if (volume != null) {
+    const vol = parseFloat(volume);
+    bgm.volume = vol;
+    if (bgmGain) bgmGain.gain.setValueAtTime(vol, audioCtx().currentTime);
+  }
   bgm.play().catch((e) => console.warn('Audio play failed:', e));
 }
 
 export function setMusicVolume(v) {
-  if (bgm) bgm.volume = parseFloat(v);
+  const vol = parseFloat(v);
+  if (bgm) bgm.volume = vol;
+  if (bgmGain) bgmGain.gain.setValueAtTime(vol, audioCtx().currentTime);
 }
 
 export function setSfxVolume(v) {
@@ -51,9 +83,21 @@ export function setSfxVolume(v) {
 }
 
 export function playSfx() {
-  if (!sfx) return;
-  sfx.currentTime = 0;
-  sfx.play().catch((err) => console.warn('SFX play failed:', err));
+  if (clickBuffer) {
+    const c = audioCtx();
+    if (!c) return;
+    const source = c.createBufferSource();
+    source.buffer = clickBuffer;
+    const gain = c.createGain();
+    gain.gain.value = sfxVol;
+    source.connect(gain);
+    gain.connect(c.destination);
+    source.start(0);
+  } else {
+    if (!sfx) return;
+    sfx.currentTime = 0;
+    sfx.play().catch((err) => console.warn('SFX play failed:', err));
+  }
 }
 
 // --- Effets de combat synthétisés (WebAudio, pas d'asset requis) ---

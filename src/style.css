@@ -23,6 +23,7 @@ html, body {
 * {
   scrollbar-width: none;
   -ms-overflow-style: none;
+  touch-action: manipulation;
 }
 
 /* === OVERLAY ROTATION MOBILE === */
