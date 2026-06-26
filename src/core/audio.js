@@ -35,6 +35,8 @@ let damageBuffer = null;
 let criticalBuffer = null;
 let failBuffer = null;
 let velocityBuffer = null;
+let winBuffer = null;
+let gameoverBuffer = null;
 let bgmGain = null;
 let bgmSource = null;
 let critFallback = new Audio('/audio/combat/UI_critical.mp3');
@@ -90,6 +92,8 @@ export async function initAudio() {
   criticalBuffer = await loadSound('/audio/combat/UI_critical.mp3');
   failBuffer = await loadSound('/audio/combat/fail.mp3');
   velocityBuffer = await loadSound('/audio/combat/velocity.mp3');
+  winBuffer = await loadSound('/audio/combat/win.mp3');
+  gameoverBuffer = await loadSound('/audio/combat/gameover.mp3');
 }
 
 export function startBgm(volume) {
@@ -183,6 +187,12 @@ export function sfxSpecial() {
 }
 export function sfxFaint() {
   playTone(300, 0.5, 'sine', 70);
+}
+export function sfxWin() {
+  if (winBuffer) playBuffer(winBuffer);
+}
+export function sfxGameover() {
+  if (gameoverBuffer) playBuffer(gameoverBuffer);
 }
 
 // Change de piste en gardant le volume courant.

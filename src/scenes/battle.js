@@ -9,7 +9,7 @@ import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
 import { generateBot, generateRandomBot } from '../data/levels.js';
 import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
-import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint, sfxClaw, sfxCritical, sfxFail, sfxVelocity } from '../core/audio.js';
+import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint, sfxClaw, sfxCritical, sfxFail, sfxVelocity, sfxWin, sfxGameover } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
 import { setAssetEl } from '../core/asset.js';
 import { toBackSprite, CAT_SPRITES } from '../data/catSprites.js';
@@ -407,7 +407,11 @@ function endBattle() {
     catName: battle.player.name,
     ts: Date.now(),
   });
-  if (won) return applyVictory();
+  if (won) {
+    sfxWin();
+    return applyVictory();
+  }
+  sfxGameover();
   showResult('Défaite...', `${battle.player.name} est K.O.`, false);
 }
 
