@@ -57,6 +57,48 @@
         <div id="player-name">Dresseur</div>
       </div>
 
+      <!-- Point Counter -->
+      <div id="point-counter"
+        style="position: absolute; top: 15px; right: 15px; background: #fff; color: #333; padding: 8px 12px; border: 4px solid #000; border-radius: 8px; font-family: 'Press Start 2P', monospace; font-size: 14px; box-shadow: 4px 4px 0px 0px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 8px; z-index: 100; cursor: pointer;"
+        title="Ouvrir la boutique">
+        <img src="/sprites/UI/cash.png" alt="Points" style="height: 20px; image-rendering: pixelated;" />
+        <span id="point-amount">0</span>
+      </div>
+
+      <!-- Shop Dialog -->
+      <dialog id="shop-dialog" class="retro-box"
+        style="padding: 20px; width: 85%; max-width: 450px; text-align: center; z-index: 200;">
+        <h2 style="margin-top: 0; color: #ffcc00; text-shadow: 1px 1px 0 #000;">Boutique</h2>
+        <p style="font-size: 10px; color: #555;">Dépensez vos points pour des objets utilisables en combat.</p>
+        <div id="shop-items" style="display: flex; flex-direction: column; gap: 15px; margin: 20px 0;">
+          <div class="shop-item" data-id="heal" data-price="50"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.1); border-radius: 8px; border: 2px solid #333;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="/items/Heal.png" alt="Soin"
+                style="width: 32px; height: 32px; image-rendering: pixelated; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));" />
+              <div style="text-align: left;">
+                <div style="font-weight: bold; font-size: 12px;">Soin</div>
+                <div style="font-size: 10px; color: #444; margin-top: 4px;">50 points</div>
+              </div>
+            </div>
+            <button class="retro-button btn-buy" style="padding: 8px 12px; font-size: 10px;">Acheter</button>
+          </div>
+          <div class="shop-item" data-id="revive" data-price="200"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: rgba(0,0,0,0.1); border-radius: 8px; border: 2px solid #333;">
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <img src="/items/revive_potion.png" alt="Potion"
+                style="width: 32px; height: 32px; image-rendering: pixelated; filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.3));" />
+              <div style="text-align: left;">
+                <div style="font-weight: bold; font-size: 12px;">Potion spéciale</div>
+                <div style="font-size: 10px; color: #444; margin-top: 4px;">200 points</div>
+              </div>
+            </div>
+            <button class="retro-button btn-buy" style="padding: 8px 12px; font-size: 10px;">Acheter</button>
+          </div>
+        </div>
+        <button id="btn-close-shop" class="retro-button" style="padding: 10px 20px;">Fermer</button>
+      </dialog>
+
       <!-- Lower Background -->
       <div id="home-bg-lower"></div>
 
@@ -74,6 +116,7 @@
         <button id="btn-play" class="action-btn">CAMPAGNE</button>
         <button id="btn-random" class="action-btn">ALEATOIRE</button>
         <button id="btn-cat-list" class="action-btn">Liste Chats</button>
+        <button id="btn-inventory" class="action-btn">Objets</button>
       </div>
 
       <!-- Drawer Menu -->
@@ -108,52 +151,54 @@
     <div id="scene-adopt" class="scene" style="display: none;">
       <div class="scene-title">Adopter un Chat</div>
 
-      <div class="scene-content" style="flex-direction: column; justify-content: flex-start; padding-top: 30px; padding-bottom: 30px; overflow-y: auto; overflow-x: hidden; width: 100%;">
+      <div class="scene-content"
+        style="flex-direction: column; justify-content: flex-start; padding-top: 30px; padding-bottom: 30px; overflow-y: auto; overflow-x: hidden; width: 100%;">
         <form id="form-adopt" class="retro-box"
           style="padding: 15px; width: 95%; max-width: 500px; box-sizing: border-box; text-align: left; color: #000; font-size: 12px; line-height: 2; margin: 0 auto; overflow-x: hidden;">
 
-        <label for="adopt-name">Nom :</label>
-        <input type="text" id="adopt-name" class="retro-input" required maxlength="12"
-          style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+          <label for="adopt-name">Nom :</label>
+          <input type="text" id="adopt-name" class="retro-input" required maxlength="12"
+            style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
 
-        <div class="form-group">
-          <label for="adopt-type-slider">Type :</label>
-          <input type="range" id="adopt-type-slider" min="0" max="2" step="1" value="1" style="width: 100%;">
-          <div id="adopt-type-display"
-            style="text-align: center; margin-top: 10px; font-weight: bold; transition: color 0.3s; color: #ffcc00; margin-bottom: 8px;">
-            Base</div>
-          <div id="adopt-type-description"
-            style="font-size: 10px; color: #444; min-height: 34px; text-align: center; margin-bottom: 12px; padding: 0 6px;">
-            Équilibré : bon compromis entre vie, défense, attaque et vitesse.</div>
-        </div>
+          <div class="form-group">
+            <label for="adopt-type-slider">Type :</label>
+            <input type="range" id="adopt-type-slider" min="0" max="2" step="1" value="1" style="width: 100%;">
+            <div id="adopt-type-display"
+              style="text-align: center; margin-top: 10px; font-weight: bold; transition: color 0.3s; color: #ffcc00; margin-bottom: 8px;">
+              Base</div>
+            <div id="adopt-type-description"
+              style="font-size: 10px; color: #444; min-height: 34px; text-align: center; margin-bottom: 12px; padding: 0 6px;">
+              Équilibré : bon compromis entre vie, défense, attaque et vitesse.</div>
+          </div>
 
-        <label>Sprite (ou 📷 pour une photo détourée) :</label>
-        <div id="adopt-sprite-grid"
-          style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px;"></div>
-        <input type="file" id="adopt-photo" accept="image/*" hidden>
-        <div id="adopt-photo-status" style="font-size: 9px; color: #666; margin-bottom: 12px; display: none;"></div>
+          <label>Sprite (ou 📷 pour une photo détourée) :</label>
+          <div id="adopt-sprite-grid"
+            style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px;"></div>
+          <input type="file" id="adopt-photo" accept="image/*" hidden>
+          <div id="adopt-photo-status" style="font-size: 9px; color: #666; margin-bottom: 12px; display: none;"></div>
 
-        <label>Objets :</label>
-        <div id="adopt-items-list"
-          style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
-          <!-- Items draggables générés par JS -->
-        </div>
+          <label>Objets :</label>
+          <div id="adopt-items-list"
+            style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+            <!-- Items draggables générés par JS -->
+          </div>
 
-        <div id="adopt-items-help" style="text-align: center; font-size: 11px; color: #666; margin-bottom: 15px;">
-          🎒 Cliquez sur un objet ci-dessus pour l'équiper (0/2)
-        </div>
+          <div id="adopt-items-help" style="text-align: center; font-size: 11px; color: #666; margin-bottom: 15px;">
+            🎒 Cliquez sur un objet ci-dessus pour l'équiper (0/2)
+          </div>
 
-        <div id="adopt-equipped-items" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; min-height: 50px;">
-          <!-- Objets équipés affichés ici -->
-        </div>
+          <div id="adopt-equipped-items"
+            style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; min-height: 50px;">
+            <!-- Objets équipés affichés ici -->
+          </div>
 
-        <div style="display: flex; justify-content: space-between;">
-          <button type="button" id="btn-cancel-adopt" class="retro-button"
-            style="font-size: 10px; padding: 10px;">Annuler</button>
-          <button type="submit" id="btn-submit-adopt" class="retro-button"
-            style="font-size: 10px; padding: 10px; background-color: #44ff44;">Ajouter</button>
-        </div>
-      </form>
+          <div style="display: flex; justify-content: space-between;">
+            <button type="button" id="btn-cancel-adopt" class="retro-button"
+              style="font-size: 10px; padding: 10px;">Annuler</button>
+            <button type="submit" id="btn-submit-adopt" class="retro-button"
+              style="font-size: 10px; padding: 10px; background-color: #44ff44;">Ajouter</button>
+          </div>
+        </form>
       </div>
     </div>
 
@@ -177,6 +222,25 @@
       <button id="btn-close-dialog">Fermer</button>
     </dialog>
 
+    <!-- Inventory Dialog -->
+    <dialog id="inventory-dialog" class="retro-box"
+      style="padding: 20px; width: 80%; max-width: 400px; text-align: center;">
+      <h2 style="margin-top: 0;">Objets utilisables</h2>
+      <div id="inventory-list"
+        style="min-height: 100px; margin: 20px 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: rgba(0,0,0,0.1); border-radius: 8px;">
+        <p style="color: #666; font-style: italic;">Votre inventaire est vide.</p>
+      </div>
+      <button id="btn-close-inventory" class="retro-button" style="padding: 10px 20px;">Fermer</button>
+    </dialog>
+
+    <!-- Use Item Dialog -->
+    <dialog id="use-item-dialog" class="retro-box" style="padding: 20px; width: 85%; max-width: 450px; text-align: center; z-index: 250;">
+      <h2 style="margin-top: 0; color: #ffcc00; text-shadow: 1px 1px 0 #000;">Utiliser sur quel chat ?</h2>
+      <div id="use-item-list" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;">
+      </div>
+      <button id="btn-close-use-item" class="retro-button" style="padding: 10px 20px;">Annuler</button>
+    </dialog>
+
     <!-- Delete Confirmation Dialog -->
     <dialog id="confirm-delete-dialog" style="text-align: center;">
       <p style="margin-bottom: 20px;">Voulez-vous vraiment relâcher ce chat ?</p>
@@ -186,6 +250,13 @@
         <button id="btn-confirm-delete" class="retro-button"
           style="background-color: #ff4444; color: white; font-size: 10px; padding: 10px 20px;">Oui</button>
       </div>
+    </dialog>
+
+    <!-- Notification Dialog -->
+    <dialog id="notification-dialog" class="retro-box"
+      style="padding: 20px; width: 80%; max-width: 300px; text-align: center; z-index: 300;">
+      <p id="notification-text" style="font-weight: bold; margin-bottom: 20px;"></p>
+      <button id="btn-close-notification" class="retro-button" style="padding: 10px 20px;">OK</button>
     </dialog>
 
   </div>

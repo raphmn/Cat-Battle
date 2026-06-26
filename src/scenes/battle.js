@@ -8,7 +8,7 @@ import { register, navigate } from '../core/sceneManager.js';
 import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
 import { generateBot, generateRandomBot } from '../data/levels.js';
-import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
+import { getCats, saveCats, addHistoryEntry, getInventory, getPoints, addToInventory, setPoints } from '../core/storage.js';
 import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint, sfxClaw, sfxCritical, sfxFail, sfxVelocity, sfxWin, sfxGameover } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
 import { setAssetEl } from '../core/asset.js';
@@ -61,6 +61,7 @@ export function initBattle() {
         <button class="bttn-action" data-act="griffer"></button>
         <button class="bttn-action" data-act="special"></button>
         <button class="bttn-action" data-act="abri"></button>
+        <button class="bttn-action" data-act="item">OBJETS</button>
         <button class="bttn-action" data-act="flee">FUIR</button>
       </div>
     </div>
@@ -71,6 +72,11 @@ export function initBattle() {
         <button class="result-btn retro-button">Continuer</button>
       </div>
     </div>
+    <dialog class="battle-item-dialog retro-box" style="padding: 20px; width: 85%; max-width: 450px; text-align: center; z-index: 250;">
+      <h2 style="margin-top: 0; color: #ffcc00; text-shadow: 1px 1px 0 #000;">Objets</h2>
+      <div class="battle-item-list" style="display: flex; flex-direction: column; gap: 10px; margin: 20px 0;"></div>
+      <button class="btn-close-battle-item retro-button" style="padding: 10px 20px;">Annuler</button>
+    </dialog>
   `;
   document.getElementById('game-container').appendChild(root);
   register('battle', root, 'flex');
@@ -104,9 +110,13 @@ export function initBattle() {
     resultTitle: root.querySelector('.result-title'),
     resultDetail: root.querySelector('.result-detail'),
     resultBtn: root.querySelector('.result-btn'),
+    itemDialog: root.querySelector('.battle-item-dialog'),
+    itemList: root.querySelector('.battle-item-list'),
+    itemCloseBtn: root.querySelector('.btn-close-battle-item'),
   };
 
   els.actions.addEventListener('click', onActionClick);
+  els.itemCloseBtn.addEventListener('click', () => els.itemDialog.close());
   els.resultBtn.addEventListener('click', () => {
     els.result.style.display = 'none';
     playTrack('menu');
@@ -220,6 +230,11 @@ function promptPlayer() {
       btn.disabled = false;
       return;
     }
+    if (act === 'item') {
+      setButtonContent(btn, 'Objets', 'Soins etc.');
+      btn.disabled = false;
+      return;
+    }
 
     const action = ACTIONS[act];
     const titleText = action.label;
@@ -251,6 +266,7 @@ function onActionClick(e) {
   playSfx();
 
   if (act === 'flee') return handleFlee();
+  if (act === 'item') return openItemDialog();
 
   busy = true;
   setActionsEnabled(false);
@@ -412,7 +428,30 @@ function endBattle() {
     return applyVictory();
   }
   sfxGameover();
-  showResult('Défaite...', `${battle.player.name} est K.O.`, false);
+  
+  // Appliquer le K.O.
+  let cats = getCats();
+  const cat = cats[ctx.catIndex];
+  if (cat) {
+    cat.ko = true;
+    saveCats(cats);
+  }
+
+  let msg = `${battle.player.name} est K.O.`;
+  cats = getCats(); // Rafraichir après sauvegarde
+  if (cats.length >= 5 && cats.every(c => c.ko)) {
+    const inv = getInventory();
+    const pts = getPoints();
+    const hasPotion = (inv['revive'] || 0) > 0;
+    const hasPoints = pts >= 200;
+    if (!hasPotion && !hasPoints) {
+      cats[0].ko = false; // Réanimer le premier chat
+      saveCats(cats);
+      msg += "\n(Urgence: 1er chat réanimé !)";
+    }
+  }
+
+  showResult('Défaite...', msg, false);
 }
 
 // Progression (CdC US08) : +1 compétence aléatoire par victoire,
@@ -421,6 +460,10 @@ function applyVictory() {
   const cats = getCats();
   const cat = cats[ctx.catIndex];
   const gained = [];
+
+  const pointsGained = Math.floor(Math.random() * 26) + 75; // entre 75 et 100
+  setPoints(getPoints() + pointsGained);
+  gained.push(`+${pointsGained} 🪙`);
 
   if (cat) {
     const enemyLvl = battle.enemy.lvl;
@@ -463,4 +506,79 @@ function showResult(title, detail, win) {
   els.resultTitle.style.color = win ? '#2a8a4a' : '#c33';
   els.resultDetail.textContent = detail;
   els.result.style.display = 'flex';
+}
+// === OBJETS EN COMBAT ===
+const CONSUMABLES = {
+  'heal': { name: 'Potion de Soin', icon: '/items/Heal.png', healAmount: 50 },
+  'revive': { name: 'Potion spéciale', icon: '/items/revive_potion.png' }
+};
+
+function openItemDialog() {
+  const inv = getInventory();
+  els.itemList.innerHTML = '';
+  
+  // On ne montre que la potion de soin en combat pour l'instant
+  const count = inv['heal'] || 0;
+  
+  if (count <= 0) {
+    els.itemList.innerHTML = '<p style="color:#666;font-size:12px;">Aucune Potion de Soin disponible.</p>';
+  } else {
+    const def = CONSUMABLES['heal'];
+    const btn = document.createElement('button');
+    btn.className = 'retro-button';
+    btn.style.cssText = 'display:flex; justify-content:space-between; align-items:center; padding:10px; font-size:12px; margin-bottom:10px; width:100%;';
+    btn.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px;">
+        <img src="${def.icon}" style="width:24px; height:24px; image-rendering:pixelated;">
+        <span>${def.name} (+${def.healAmount} PV)</span>
+      </div>
+      <span>x${count}</span>
+    `;
+    btn.onclick = () => {
+      els.itemDialog.close();
+      useItemInBattle('heal');
+    };
+    els.itemList.appendChild(btn);
+  }
+  
+  els.itemDialog.showModal();
+}
+
+function useItemInBattle(id) {
+  if (id === 'heal') {
+    addToInventory('heal', -1);
+    const amount = CONSUMABLES['heal'].healAmount;
+    
+    // Le joueur utilise l'objet, c'est son tour
+    busy = true;
+    setActionsEnabled(false);
+    
+    // Soin manuel (ne passe pas par battleEngine car objet)
+    battle.player.hp = Math.min(battle.player.hp + amount, battle.player.maxpv);
+    updateHud(); // Met à jour la barre
+    sfxVelocity(); // Son générique de soin
+    
+    playEvents([
+      { type: 'message', text: `${battle.player.name} utilise une Potion de Soin et récupère ${amount} PV !` }
+    ]).then(() => {
+      // Fin du tour du joueur, c'est au tour de l'ennemi
+      battle.tickCooldowns(battle.player);
+      battle.player.shielded = false; 
+      
+      const enemyActionId = battle.chooseEnemyAction();
+      const events = battle.performAction('enemy', enemyActionId);
+      
+      battle.tickCooldowns(battle.enemy);
+      battle.turn++;
+      
+      if (battle.player.hp <= 0) {
+        battle.over = true;
+        battle.result = 'lose';
+      }
+      
+      return playEvents(events);
+    }).then(() => {
+      afterRound();
+    });
+  }
 }
