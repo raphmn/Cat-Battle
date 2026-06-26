@@ -62,6 +62,7 @@ body {
   position: relative;
   width: 100vw;
   height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background-color: #000;
 }
@@ -284,8 +285,10 @@ body {
   height: 100%;
   /* Remplit tout l'écran du menu */
   background-size: cover;
-  /* Couvre tout, centré sur le panneau */
-  background-position: center center;
+  /* Aligné en bas à gauche */
+  background-position: left bottom;
+  /* Zoom de 1% pour faire dépasser les bords (cache les éventuelles lignes) */
+  transform: scale(1.15);
   background-repeat: no-repeat;
   z-index: 0;
   /* Derrière logo + boutons */
@@ -1161,6 +1164,7 @@ dialog p {
   filter: grayscale(100%);
   opacity: 0.6;
 }
+
 .cat-ko .cat-card-name::after {
   content: " (K.O.)";
   color: #ff4444;
