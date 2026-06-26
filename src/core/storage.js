@@ -67,6 +67,7 @@ function normalizeCat(c) {
     atk: c.atk ?? c.attack ?? 20,
     def: c.def ?? c.defense ?? 10,
     vit: c.vit ?? c.speed ?? 15,
+    ko: c.ko ?? false,
   };
 }
 

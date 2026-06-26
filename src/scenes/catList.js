@@ -315,7 +315,7 @@ function renderCatList() {
 
   cats.forEach((cat, index) => {
     const card = document.createElement('div');
-    card.className = 'cat-card';
+    card.className = cat.ko ? 'cat-card cat-ko' : 'cat-card';
 
     const info = document.createElement('div');
     info.className = 'cat-card-info';

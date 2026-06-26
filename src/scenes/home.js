@@ -3,9 +3,10 @@
 // ==========================================
 
 import { navigate } from '../core/sceneManager.js';
-import { getPlayerName, setPlayerName, getCats, getPoints, setPoints, getInventory, addToInventory } from '../core/storage.js';
+import { getPlayerName, setPlayerName, getCats, saveCats, getPoints, setPoints, getInventory, addToInventory } from '../core/storage.js';
 import { setMusicVolume, setSfxVolume, playSfx, sfxFail, sfxWin } from '../core/audio.js';
 import { startRandomBattle } from './levelSelect.js';
+import { assetMarkup } from '../core/asset.js';
 
 export function initHome() {
   const nameEl = document.getElementById('player-name');
