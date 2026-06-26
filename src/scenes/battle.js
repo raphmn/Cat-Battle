@@ -412,6 +412,15 @@ function endBattle() {
     return applyVictory();
   }
   sfxGameover();
+  
+  // Appliquer le K.O.
+  const cats = getCats();
+  const cat = cats[ctx.catIndex];
+  if (cat) {
+    cat.ko = true;
+    saveCats(cats);
+  }
+
   showResult('Défaite...', `${battle.player.name} est K.O.`, false);
 }
 

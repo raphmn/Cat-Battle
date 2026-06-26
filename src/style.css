@@ -1,15 +1,19 @@
 /* Reset basique */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   height: 100%;
   overflow: hidden;
-  font-family: 'Press Start 2P', monospace; /* 8-bit Font */
+  font-family: 'Press Start 2P', monospace;
+  /* 8-bit Font */
   background-color: #000;
-  color: #333; /* Dark text typical of Pokemon dialogs */
-  image-rendering: pixelated; /* Crisp rendering */
-  
+  color: #333;
+  /* Dark text typical of Pokemon dialogs */
+  image-rendering: pixelated;
+  /* Crisp rendering */
+
   /* Pour centrer le jeu sur Desktop */
   display: flex;
   justify-content: center;
@@ -20,6 +24,7 @@ html, body {
 ::-webkit-scrollbar {
   display: none;
 }
+
 * {
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -31,7 +36,10 @@ html, body {
 #rotate-overlay {
   display: none;
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #000;
   color: #fff;
   z-index: 10000;
@@ -60,12 +68,13 @@ html, body {
 
 @media (min-width: 768px) {
   #game-container {
-    height: 94vh; /* Laisse ~3% en haut et en bas */
+    height: 94vh;
+    /* Laisse ~3% en haut et en bas */
     aspect-ratio: 9 / 16;
     width: auto;
     border: 4px solid #333;
     border-radius: 10px;
-    box-shadow: 0 0 20px rgba(255,255,255,0.2);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
   }
 }
 
@@ -76,7 +85,7 @@ html, body {
   left: 0;
   width: 100%;
   height: 100%;
-  z-index: 1; 
+  z-index: 1;
   display: block;
 }
 
@@ -92,19 +101,22 @@ html, body {
   flex-direction: column;
   justify-content: space-between;
   box-sizing: border-box;
-  pointer-events: none; 
+  pointer-events: none;
 }
 
 /* Autorise les clics sur les éléments interactifs de l'UI */
-#ui-layer > * {
+#ui-layer>* {
   pointer-events: auto;
 }
 
 /* Detourage Overlay */
 #detourage-overlay {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
-  background-color: rgba(0,0,0,0.85);
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.85);
   z-index: 10000;
   display: flex;
   flex-direction: column;
@@ -117,24 +129,34 @@ html, body {
   line-height: 1.5;
   padding: 20px;
 }
+
 #detourage-overlay .spinner {
   width: 40px;
   height: 40px;
-  border: 5px solid rgba(255,255,255,0.2);
+  border: 5px solid rgba(255, 255, 255, 0.2);
   border-top: 5px solid #ffcc00;
   border-radius: 50%;
   animation: spin 1s linear infinite;
   margin-bottom: 25px;
 }
+
 @keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
+  0% {
+    transform: rotate(0deg);
+  }
+
+  100% {
+    transform: rotate(360deg);
+  }
 }
 
 /* Loading Screen */
 #loading-screen {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: #000;
   z-index: 100;
   display: flex;
@@ -152,8 +174,13 @@ html, body {
 }
 
 @keyframes blink {
-  0% { opacity: 1; }
-  100% { opacity: 0.3; }
+  0% {
+    opacity: 1;
+  }
+
+  100% {
+    opacity: 0.3;
+  }
 }
 
 #btn-start {
@@ -164,7 +191,8 @@ html, body {
   border: none;
   box-shadow: none;
   color: #fff;
-  text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000; /* Garde la lisibilité style pixel */
+  text-shadow: 2px 2px 0 #000, -2px -2px 0 #000, 2px -2px 0 #000, -2px 2px 0 #000;
+  /* Garde la lisibilité style pixel */
   cursor: pointer;
   font-family: 'Press Start 2P', monospace;
 }
@@ -176,18 +204,24 @@ html, body {
 }
 
 @keyframes pulse {
-  0% { transform: scale(1); }
-  100% { transform: scale(1.1); }
+  0% {
+    transform: scale(1);
+  }
+
+  100% {
+    transform: scale(1.1);
+  }
 }
 
 /* Retro Pixel Border Mixin / Classes */
 .retro-box {
   background-color: #fff;
   border: 4px solid #000;
-  box-shadow: 
-    inset -4px -4px 0px 0px rgba(0,0,0,0.1),
-    4px 4px 0px 0px rgba(0,0,0,0.2);
-  border-radius: 8px; /* Slightly rounded for Gen 4 DS look */
+  box-shadow:
+    inset -4px -4px 0px 0px rgba(0, 0, 0, 0.1),
+    4px 4px 0px 0px rgba(0, 0, 0, 0.2);
+  border-radius: 8px;
+  /* Slightly rounded for Gen 4 DS look */
 }
 
 .retro-button {
@@ -247,11 +281,14 @@ html, body {
   top: 0;
   left: 0;
   width: 100%;
-  height: 100%; /* Remplit tout l'écran du menu */
-  background-size: cover; /* Couvre tout, centré sur le panneau */
+  height: 100%;
+  /* Remplit tout l'écran du menu */
+  background-size: cover;
+  /* Couvre tout, centré sur le panneau */
   background-position: center center;
   background-repeat: no-repeat;
-  z-index: 0; /* Derrière logo + boutons */
+  z-index: 0;
+  /* Derrière logo + boutons */
 }
 
 /* Logo Area */
@@ -260,8 +297,10 @@ html, body {
   top: 25%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 100%; /* Prend toute la largeur dispo */
-  max-width: 550px; /* Logo encore plus grand */
+  width: 100%;
+  /* Prend toute la largeur dispo */
+  max-width: 550px;
+  /* Logo encore plus grand */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -270,15 +309,23 @@ html, body {
 }
 
 @keyframes floatLogo {
-  0%, 100% { transform: translate(-50%, -50%); }
-  50% { transform: translate(-50%, -53%); }
+
+  0%,
+  100% {
+    transform: translate(-50%, -50%);
+  }
+
+  50% {
+    transform: translate(-50%, -53%);
+  }
 }
 
 .logo-ellipse {
   position: absolute;
-  width: 200vw; 
-  height: 400px; /* Plus grande hauteur pour que la lueur soit plus épaisse */
-  background: radial-gradient(ellipse at center, rgba(255,255,255,0.85) 0%, rgba(255,255,255,0) 65%);
+  width: 200vw;
+  height: 400px;
+  /* Plus grande hauteur pour que la lueur soit plus épaisse */
+  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 65%);
   z-index: -1;
 }
 
@@ -290,7 +337,10 @@ html, body {
 
 .logo-shine {
   position: absolute;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   pointer-events: none;
   z-index: 2;
   overflow: hidden;
@@ -307,16 +357,27 @@ html, body {
 .logo-shine::after {
   content: "";
   position: absolute;
-  top: 0; left: -100%; width: 40%; height: 100%;
-  background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0) 100%);
+  top: 0;
+  left: -100%;
+  width: 40%;
+  height: 100%;
+  background: linear-gradient(to right, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 0.8) 50%, rgba(255, 255, 255, 0) 100%);
   transform: skewX(-25deg);
   animation: logoShineAnim 6s infinite;
 }
 
 @keyframes logoShineAnim {
-  0% { left: -100%; }
-  25% { left: 200%; }
-  100% { left: 200%; }
+  0% {
+    left: -100%;
+  }
+
+  25% {
+    left: 200%;
+  }
+
+  100% {
+    left: 200%;
+  }
 }
 
 #main-logo {
@@ -324,7 +385,7 @@ html, body {
   width: 100%;
   height: auto;
   z-index: 1;
-  filter: drop-shadow(0px 4px 0px rgba(0,0,0,0.5));
+  filter: drop-shadow(0px 4px 0px rgba(0, 0, 0, 0.5));
 }
 
 /* Center : Menu Jouer */
@@ -333,21 +394,30 @@ html, body {
   top: 65%;
   left: 50%;
   transform: translate(-50%, -50%);
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 90%;
+  max-width: 340px;
+  gap: 12px;
+  /* Espace entre les éléments */
+  justify-items: center;
   align-items: center;
-  gap: 20px; /* Espace entre JOUER et Liste Chats */
   z-index: 10;
 }
 
 #btn-play {
-  font-size: 32px; /* Agrandit le bouton Jouer */
-  padding: 25px 50px;
+  grid-column: 1 / -1;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 24px;
+  /* Agrandit le bouton Jouer */
+  padding: 20px;
   background-color: #fff;
   color: #333;
   border: 4px solid #000;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 4px #ff4444, 4px 4px 0px 0px rgba(0,0,0,0.5); /* Double bordure DS typique */
+  box-shadow: inset 0 0 0 4px #ff4444, 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+  /* Double bordure DS typique */
   text-shadow: none;
   cursor: pointer;
   font-family: 'Press Start 2P', monospace;
@@ -361,17 +431,21 @@ html, body {
 #btn-play:active {
   transform: translate(2px, 2px) scale(1);
   background-color: #ffebeb;
-  box-shadow: inset 0 0 0 4px #cc0000, 2px 2px 0px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 0 4px #cc0000, 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
 }
 
 #btn-cat-list {
-  font-size: 14px;
-  padding: 15px 25px;
+  grid-column: 2;
+  grid-row: 2;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 11px;
+  padding: 12px 8px;
   background-color: #fff;
   color: #333;
   border: 4px solid #000;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 4px #44aaff, 4px 4px 0px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 0 4px #44aaff, 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   font-family: 'Press Start 2P', monospace;
   transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
@@ -384,17 +458,52 @@ html, body {
 #btn-cat-list:active {
   transform: translate(2px, 2px) scale(1);
   background-color: #ebf5ff;
-  box-shadow: inset 0 0 0 4px #0077cc, 2px 2px 0px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 0 4px #0077cc, 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
 }
 
-#btn-random {
-  font-size: 18px;
-  padding: 18px 35px;
+#btn-inventory {
+  grid-column: 2;
+  grid-row: 3;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 11px;
+  padding: 12px 8px;
   background-color: #fff;
   color: #333;
   border: 4px solid #000;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 4px #9858a0, 4px 4px 0px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 0 4px #ff9900, 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
+  cursor: pointer;
+  font-family: 'Press Start 2P', monospace;
+  transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
+}
+
+#btn-inventory:hover {
+  transform: scale(1.05);
+}
+
+#btn-inventory:active {
+  transform: translate(2px, 2px) scale(1);
+  background-color: #fff5eb;
+  box-shadow: inset 0 0 0 4px #cc7a00, 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
+}
+
+#btn-random {
+  grid-column: 1;
+  grid-row: 2 / span 2;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  padding: 12px;
+  background-color: #fff;
+  color: #333;
+  border: 4px solid #000;
+  border-radius: 8px;
+  box-shadow: inset 0 0 0 4px #9858a0, 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
   cursor: pointer;
   font-family: 'Press Start 2P', monospace;
   transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
@@ -407,7 +516,7 @@ html, body {
 #btn-random:active {
   transform: translate(2px, 2px) scale(1);
   background-color: #f4ebff;
-  box-shadow: inset 0 0 0 4px #6c3a74, 2px 2px 0px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 0 4px #6c3a74, 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
 }
 
 /* Grille de sprites à l'adoption */
@@ -425,11 +534,16 @@ html, body {
   overflow: hidden;
   transition: transform 0.1s, border-color 0.1s, box-shadow 0.1s;
 }
-.sprite-tile:hover { transform: scale(1.06); }
+
+.sprite-tile:hover {
+  transform: scale(1.06);
+}
+
 .sprite-tile.selected {
   border-color: #44aaff;
   box-shadow: 0 0 0 2px #44aaff;
 }
+
 .sprite-tile img {
   width: 100%;
   height: 100%;
@@ -554,7 +668,7 @@ html, body {
   color: #333;
   border: 4px solid #000;
   border-radius: 8px;
-  box-shadow: inset 0 0 0 4px #44ff44, 4px 4px 0px 0px rgba(0,0,0,0.5); 
+  box-shadow: inset 0 0 0 4px #44ff44, 4px 4px 0px 0px rgba(0, 0, 0, 0.5);
   text-shadow: none;
   cursor: pointer;
   font-family: 'Press Start 2P', monospace;
@@ -565,17 +679,18 @@ html, body {
 #btn-adopt:active {
   transform: translate(2px, 2px) scale(1);
   background-color: #ebffeb;
-  box-shadow: inset 0 0 0 4px #00cc00, 2px 2px 0px 0px rgba(0,0,0,0.5);
+  box-shadow: inset 0 0 0 4px #00cc00, 2px 2px 0px 0px rgba(0, 0, 0, 0.5);
 }
 
 /* Dialog Box (Pokemon text box style) */
 dialog {
   background-color: #fff;
   border: 6px solid #555;
-  outline: 4px solid #000; /* Double border effect */
+  outline: 4px solid #000;
+  /* Double border effect */
   border-radius: 8px;
   padding: 25px;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.5);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.5);
   text-align: left;
   font-family: 'Press Start 2P', monospace;
   font-size: 14px;
@@ -586,14 +701,15 @@ dialog {
 }
 
 dialog::backdrop {
-  background: rgba(0,0,0,0.6);
+  background: rgba(0, 0, 0, 0.6);
 }
 
 dialog p {
   margin: 0 0 25px 0;
 }
 
-#btn-close-dialog, #btn-close-sound {
+#btn-close-dialog,
+#btn-close-sound {
   display: block;
   margin: 0 0 0 auto;
   font-size: 12px;
@@ -607,7 +723,8 @@ dialog p {
   font-family: 'Press Start 2P', monospace;
 }
 
-#btn-close-dialog:active, #btn-close-sound:active {
+#btn-close-dialog:active,
+#btn-close-sound:active {
   transform: translate(2px, 2px);
   box-shadow: 0 0 0 #000;
 }
@@ -698,7 +815,7 @@ dialog p {
 }
 
 #scene-adopt .retro-box::-webkit-scrollbar-thumb {
-  background: rgba(0,0,0,0.3);
+  background: rgba(0, 0, 0, 0.3);
   border-radius: 999px;
 }
 
@@ -761,8 +878,15 @@ dialog p {
 
 /* Animations pour le label de type */
 @keyframes bounceType {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-5px); }
+
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-5px);
+  }
 }
 
 .type-animated {
@@ -781,7 +905,7 @@ dialog p {
   padding: 12px;
   margin-bottom: 14px;
   color: #222;
-  box-shadow: 4px 4px 0 rgba(0,0,0,0.35);
+  box-shadow: 4px 4px 0 rgba(0, 0, 0, 0.35);
   font-size: 11px;
   text-align: left;
 }
@@ -805,8 +929,8 @@ dialog p {
   color: #555;
   line-height: 1.4;
   padding: 8px 10px;
-  background: rgba(255,255,255,0.8);
-  border: 1px solid rgba(0,0,0,0.1);
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 8px;
 }
 
@@ -863,6 +987,7 @@ dialog p {
 .btn-delete:hover {
   transform: translateY(-1px);
 }
+
 .cat-card-item {
   grid-column: 1 / -1;
   display: flex;
@@ -915,6 +1040,7 @@ dialog p {
   white-space: normal;
   overflow: hidden;
 }
+
 .stat-row {
   display: flex;
   align-items: center;
@@ -968,17 +1094,17 @@ dialog p {
   margin-bottom: 12px;
 }
 
-#adopt-items-list > div {
+#adopt-items-list>div {
   cursor: grab;
   transition: transform 0.1s, background 0.1s;
 }
 
-#adopt-items-list > div:hover {
+#adopt-items-list>div:hover {
   transform: translateY(-2px);
   background: #f0f0f0 !important;
 }
 
-#adopt-items-list > div:active {
+#adopt-items-list>div:active {
   cursor: grabbing;
 }
 
@@ -1007,7 +1133,7 @@ dialog p {
   flex-wrap: wrap;
 }
 
-#adopt-equipped-items > div {
+#adopt-equipped-items>div {
   position: relative;
 }
 

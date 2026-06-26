@@ -9,6 +9,8 @@ export const KEYS = {
   playerName: 'catbattle_player_name',
   catList: 'cat_list',
   history: 'catbattle_history',
+  points: 'catbattle_points',
+  inventory: 'catbattle_inventory',
 };
 
 const HISTORY_MAX = 50;
@@ -20,6 +22,28 @@ export function getPlayerName() {
 
 export function setPlayerName(name) {
   localStorage.setItem(KEYS.playerName, name);
+}
+
+// --- Points ---
+export function getPoints() {
+  const p = localStorage.getItem(KEYS.points);
+  return p ? parseInt(p, 10) : 0;
+}
+
+export function setPoints(amount) {
+  localStorage.setItem(KEYS.points, amount.toString());
+}
+
+// --- Inventaire In-Game ---
+export function getInventory() {
+  const inv = localStorage.getItem(KEYS.inventory);
+  return inv ? JSON.parse(inv) : {};
+}
+
+export function addToInventory(itemId, amount = 1) {
+  const inv = getInventory();
+  inv[itemId] = (inv[itemId] || 0) + amount;
+  localStorage.setItem(KEYS.inventory, JSON.stringify(inv));
 }
 
 // --- Liste des chats ---
@@ -34,8 +58,8 @@ function normalizeCat(c) {
         ? c.items
         : [c.items]
       : c.item
-      ? [c.item]
-      : [],
+        ? [c.item]
+        : [],
     item: c.item ?? null,
     lvl: c.lvl ?? c.level ?? 1,
     wins: c.wins ?? 0,

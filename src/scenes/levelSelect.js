@@ -76,7 +76,9 @@ function openPicker(level, random = false) {
     return;
   }
   if (cats.length === 1) {
-    startBattle(level, 0, random);
+    if (!cats[0].ko) {
+      startBattle(level, 0, random);
+    }
     return;
   }
 
@@ -86,11 +88,18 @@ function openPicker(level, random = false) {
   cats.forEach((c, i) => {
     const btn = document.createElement('button');
     btn.className = 'picker-cat retro-button';
-    btn.innerHTML = `${assetMarkup(c.asset || '🐱', 20)} ${c.name} <span style="font-size:8px;">Niv.${c.lvl}</span>`;
-    btn.addEventListener('click', () => {
-      picker.close();
-      startBattle(pendingLevel, i, pendingRandom);
-    });
+    if (c.ko) {
+      btn.style.filter = 'grayscale(100%)';
+      btn.style.opacity = '0.5';
+      btn.innerHTML = `${assetMarkup(c.asset || '🐱', 20)} ${c.name} <span style="font-size:8px;">Niv.${c.lvl} (K.O.)</span>`;
+      btn.addEventListener('click', () => {}); // Ne rien faire
+    } else {
+      btn.innerHTML = `${assetMarkup(c.asset || '🐱', 20)} ${c.name} <span style="font-size:8px;">Niv.${c.lvl}</span>`;
+      btn.addEventListener('click', () => {
+        picker.close();
+        startBattle(pendingLevel, i, pendingRandom);
+      });
+    }
     pickerList.appendChild(btn);
   });
   picker.showModal();
