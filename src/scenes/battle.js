@@ -8,7 +8,7 @@ import { register, navigate } from '../core/sceneManager.js';
 import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
 import { generateBot, generateRandomBot } from '../data/levels.js';
-import { getCats, saveCats, addHistoryEntry } from '../core/storage.js';
+import { getCats, saveCats, addHistoryEntry, getInventory, getPoints } from '../core/storage.js';
 import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint, sfxClaw, sfxCritical, sfxFail, sfxVelocity, sfxWin, sfxGameover } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
 import { setAssetEl } from '../core/asset.js';
@@ -414,14 +414,28 @@ function endBattle() {
   sfxGameover();
   
   // Appliquer le K.O.
-  const cats = getCats();
+  let cats = getCats();
   const cat = cats[ctx.catIndex];
   if (cat) {
     cat.ko = true;
     saveCats(cats);
   }
 
-  showResult('Défaite...', `${battle.player.name} est K.O.`, false);
+  let msg = `${battle.player.name} est K.O.`;
+  cats = getCats(); // Rafraichir après sauvegarde
+  if (cats.length >= 5 && cats.every(c => c.ko)) {
+    const inv = getInventory();
+    const pts = getPoints();
+    const hasPotion = (inv['revive'] || 0) > 0;
+    const hasPoints = pts >= 200;
+    if (!hasPotion && !hasPoints) {
+      cats[0].ko = false; // Réanimer le premier chat
+      saveCats(cats);
+      msg += "\n(Urgence: 1er chat réanimé !)";
+    }
+  }
+
+  showResult('Défaite...', msg, false);
 }
 
 // Progression (CdC US08) : +1 compétence aléatoire par victoire,
