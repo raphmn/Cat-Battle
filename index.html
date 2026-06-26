@@ -18,7 +18,7 @@
   <link rel="apple-touch-icon" sizes="180x180" href="/metadata/ios/180.png">
   <link rel="apple-touch-icon" sizes="167x167" href="/metadata/ios/167.png">
 
-  <title>Cat Battles</title>
+  <title>Cat Battles BETA</title>
 </head>
 
 <body>
@@ -108,52 +108,54 @@
     <div id="scene-adopt" class="scene" style="display: none;">
       <div class="scene-title">Adopter un Chat</div>
 
-      <div class="scene-content" style="flex-direction: column; justify-content: flex-start; padding-top: 30px; padding-bottom: 30px; overflow-y: auto; overflow-x: hidden; width: 100%;">
+      <div class="scene-content"
+        style="flex-direction: column; justify-content: flex-start; padding-top: 30px; padding-bottom: 30px; overflow-y: auto; overflow-x: hidden; width: 100%;">
         <form id="form-adopt" class="retro-box"
           style="padding: 15px; width: 95%; max-width: 500px; box-sizing: border-box; text-align: left; color: #000; font-size: 12px; line-height: 2; margin: 0 auto; overflow-x: hidden;">
 
-        <label for="adopt-name">Nom :</label>
-        <input type="text" id="adopt-name" class="retro-input" required maxlength="12"
-          style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
+          <label for="adopt-name">Nom :</label>
+          <input type="text" id="adopt-name" class="retro-input" required maxlength="12"
+            style="width: 100%; box-sizing: border-box; margin-bottom: 15px;">
 
-        <div class="form-group">
-          <label for="adopt-type-slider">Type :</label>
-          <input type="range" id="adopt-type-slider" min="0" max="2" step="1" value="1" style="width: 100%;">
-          <div id="adopt-type-display"
-            style="text-align: center; margin-top: 10px; font-weight: bold; transition: color 0.3s; color: #ffcc00; margin-bottom: 8px;">
-            Base</div>
-          <div id="adopt-type-description"
-            style="font-size: 10px; color: #444; min-height: 34px; text-align: center; margin-bottom: 12px; padding: 0 6px;">
-            Équilibré : bon compromis entre vie, défense, attaque et vitesse.</div>
-        </div>
+          <div class="form-group">
+            <label for="adopt-type-slider">Type :</label>
+            <input type="range" id="adopt-type-slider" min="0" max="2" step="1" value="1" style="width: 100%;">
+            <div id="adopt-type-display"
+              style="text-align: center; margin-top: 10px; font-weight: bold; transition: color 0.3s; color: #ffcc00; margin-bottom: 8px;">
+              Base</div>
+            <div id="adopt-type-description"
+              style="font-size: 10px; color: #444; min-height: 34px; text-align: center; margin-bottom: 12px; padding: 0 6px;">
+              Équilibré : bon compromis entre vie, défense, attaque et vitesse.</div>
+          </div>
 
-        <label>Sprite (ou 📷 pour une photo détourée) :</label>
-        <div id="adopt-sprite-grid"
-          style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px;"></div>
-        <input type="file" id="adopt-photo" accept="image/*" hidden>
-        <div id="adopt-photo-status" style="font-size: 9px; color: #666; margin-bottom: 12px; display: none;"></div>
+          <label>Sprite (ou 📷 pour une photo détourée) :</label>
+          <div id="adopt-sprite-grid"
+            style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 8px; margin-bottom: 8px;"></div>
+          <input type="file" id="adopt-photo" accept="image/*" hidden>
+          <div id="adopt-photo-status" style="font-size: 9px; color: #666; margin-bottom: 12px; display: none;"></div>
 
-        <label>Objets :</label>
-        <div id="adopt-items-list"
-          style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
-          <!-- Items draggables générés par JS -->
-        </div>
+          <label>Objets :</label>
+          <div id="adopt-items-list"
+            style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-bottom: 12px;">
+            <!-- Items draggables générés par JS -->
+          </div>
 
-        <div id="adopt-items-help" style="text-align: center; font-size: 11px; color: #666; margin-bottom: 15px;">
-          🎒 Cliquez sur un objet ci-dessus pour l'équiper (0/2)
-        </div>
+          <div id="adopt-items-help" style="text-align: center; font-size: 11px; color: #666; margin-bottom: 15px;">
+            🎒 Cliquez sur un objet ci-dessus pour l'équiper (0/2)
+          </div>
 
-        <div id="adopt-equipped-items" style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; min-height: 50px;">
-          <!-- Objets équipés affichés ici -->
-        </div>
+          <div id="adopt-equipped-items"
+            style="display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 15px; min-height: 50px;">
+            <!-- Objets équipés affichés ici -->
+          </div>
 
-        <div style="display: flex; justify-content: space-between;">
-          <button type="button" id="btn-cancel-adopt" class="retro-button"
-            style="font-size: 10px; padding: 10px;">Annuler</button>
-          <button type="submit" id="btn-submit-adopt" class="retro-button"
-            style="font-size: 10px; padding: 10px; background-color: #44ff44;">Ajouter</button>
-        </div>
-      </form>
+          <div style="display: flex; justify-content: space-between;">
+            <button type="button" id="btn-cancel-adopt" class="retro-button"
+              style="font-size: 10px; padding: 10px;">Annuler</button>
+            <button type="submit" id="btn-submit-adopt" class="retro-button"
+              style="font-size: 10px; padding: 10px; background-color: #44ff44;">Ajouter</button>
+          </div>
+        </form>
       </div>
     </div>
 
