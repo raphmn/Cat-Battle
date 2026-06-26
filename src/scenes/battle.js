@@ -8,7 +8,7 @@ import { register, navigate } from '../core/sceneManager.js';
 import { Battle } from '../systems/battleEngine.js';
 import { ACTIONS } from '../data/attacks.js';
 import { generateBot, generateRandomBot } from '../data/levels.js';
-import { getCats, saveCats, addHistoryEntry, getInventory, getPoints, addToInventory } from '../core/storage.js';
+import { getCats, saveCats, addHistoryEntry, getInventory, getPoints, addToInventory, setPoints } from '../core/storage.js';
 import { playSfx, playTrack, sfxHit, sfxSpecial, sfxFaint, sfxClaw, sfxCritical, sfxFail, sfxVelocity, sfxWin, sfxGameover } from '../core/audio.js';
 import { applyItemBonus } from '../data/items.js';
 import { setAssetEl } from '../core/asset.js';
@@ -460,6 +460,10 @@ function applyVictory() {
   const cats = getCats();
   const cat = cats[ctx.catIndex];
   const gained = [];
+
+  const pointsGained = Math.floor(Math.random() * 26) + 75; // entre 75 et 100
+  setPoints(getPoints() + pointsGained);
+  gained.push(`+${pointsGained} 🪙`);
 
   if (cat) {
     const enemyLvl = battle.enemy.lvl;

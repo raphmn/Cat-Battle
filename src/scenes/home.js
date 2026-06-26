@@ -29,6 +29,12 @@ export function initHome() {
   // Initialisation du compteur de points
   document.getElementById('point-amount').textContent = getPoints();
 
+  window.addEventListener('scene:change', (e) => {
+    if (e.detail === 'home') {
+      document.getElementById('point-amount').textContent = getPoints();
+    }
+  });
+
   profile.addEventListener('click', () => {
     const n = prompt('Entrez votre nouveau nom de dresseur :', getPlayerName());
     if (n !== null && n.trim() !== '') {
