@@ -1149,3 +1149,9 @@ dialog p {
 #adopt-equipped-items button:active {
   transform: scale(0.95);
 }
+
+/* Antialiasing très léger sur les sprites des chats */
+.asset-img,
+.sprite-img {
+  filter: drop-shadow(0 0 1px rgba(0, 0, 0, 0.4)) blur(0.5px);
+}

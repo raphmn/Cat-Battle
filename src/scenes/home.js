@@ -126,6 +126,7 @@ export function initHome() {
   // Use Item Dialog
   const useItemDialog = document.getElementById('use-item-dialog');
   const useItemList = document.getElementById('use-item-list');
+  document.getElementById('btn-close-use-item').addEventListener('click', () => useItemDialog.close());
 
   inventoryList.addEventListener('click', (e) => {
     if (e.target.classList.contains('btn-use-item')) {
