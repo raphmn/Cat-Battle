@@ -1,4 +1,4 @@
-# 🐱 Cat Battles ⚔️
+# 🐱 Cats Battle ⚔️
 
 Un jeu de combat rétro de chats au tour par tour, développé sous forme de **PWA (Progressive Web App)** performante et immersive. Adoptez vos chats, équipez-les d'objets stratégiques, entraînez-les et affrontez des bots de difficulté croissante !
 
