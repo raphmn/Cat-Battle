@@ -5,7 +5,7 @@
 
 import { register, navigate } from '../core/sceneManager.js';
 import { BOT_LEVELS } from '../data/levels.js';
-import { getCats } from '../core/storage.js';
+import { getCats, getHistory } from '../core/storage.js';
 import { startBattle } from './battle.js';
 import { assetMarkup } from '../core/asset.js';
 
@@ -48,12 +48,17 @@ const BAND_COLORS = { Facile: '#58a060', Moyen: '#d8a000', Difficile: '#e05050' 
 
 function renderLevels() {
   grid.innerHTML = '';
+  const history = getHistory();
 
   BOT_LEVELS.forEach((lv) => {
     const b = lv.base;
+    const hasPlayed = history.some(h => h.level === lv.level && h.result === 'win');
     const btn = document.createElement('button');
     btn.className = 'level-btn';
     btn.style.boxShadow = `inset 0 0 0 4px ${BAND_COLORS[lv.label]}, 4px 4px 0 rgba(0,0,0,.5)`;
+    if (hasPlayed) {
+      btn.style.backgroundColor = '#e8ffe8'; // Vert très clair
+    }
     btn.innerHTML = `
       <div class="lvl-num">Niv.${lv.level}</div>
       <div class="lvl-enemy">${lv.label}</div>
