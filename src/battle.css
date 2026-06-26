@@ -539,8 +539,8 @@
 .battle-actions {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
-  gap: 10px;
+  grid-template-rows: 1fr 1fr 1fr 1fr;
+  gap: 6px;
   flex: 1;
   /* remplit l'espace restant : blocs d'attaque plus gros */
   min-height: 0;
@@ -551,10 +551,11 @@
   font-size: 10px;
   line-height: 1.2;
   text-align: center;
-  padding: 8px 6px;
+  padding: 6px 4px;
   cursor: pointer;
   border: 4px solid #000;
-  border-radius: 10px;
+  outline: 2px solid #fff;
+  border-radius: 8px;
   color: #fff;
   text-transform: uppercase;
   box-shadow: 3px 3px 0 rgba(0, 0, 0, 0.5);
@@ -563,38 +564,72 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
+  overflow: hidden;
 }
 
 .bttn-action .action-label {
   display: block;
-  font-size: 13px;
+  font-size: 11px;
   font-weight: 800;
+  word-break: break-word;
 }
 
 .bttn-action .action-desc {
   display: block;
-  font-size: 8px;
+  font-size: 7px;
   line-height: 1.2;
   opacity: 0.9;
   text-transform: none;
   font-family: 'Press Start 2P', monospace;
 }
 
+@media (max-width: 380px), (max-height: 650px) {
+  .bttn-action .action-desc {
+    display: none;
+  }
+  .bttn-action .action-label {
+    font-size: 9px;
+  }
+  .bttn-action {
+    gap: 0;
+  }
+}
+
 .bttn-action[data-act='griffer'] {
   background: #e86850;
+  grid-column: 1;
+  grid-row: 1 / span 2;
 }
 
 .bttn-action[data-act='special'] {
   background: #9858a0;
+  grid-column: 2;
+  grid-row: 1 / span 2;
 }
 
 .bttn-action[data-act='abri'] {
   background: #58a060;
+  grid-column: 1;
+  grid-row: 3 / span 2;
+}
+
+.bttn-action[data-act='item'] {
+  background: #d8a000;
+  grid-column: 2;
+  grid-row: 3;
+}
+.bttn-action[data-act='item'] .action-desc {
+  display: none;
 }
 
 .bttn-action[data-act='flee'] {
   background: #4878b0;
+  grid-column: 2;
+  grid-row: 4;
+}
+.bttn-action[data-act='flee'] .action-desc {
+  display: none;
 }
 
 .bttn-action:active {
